@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --primary-color: #08244d;
+    --secondary-color: #ffff;
+    --hover-color: #0080ff;
+    --text-primary: #ecf9ff;
+    --text-secondry: #08244d;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
