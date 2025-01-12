@@ -1,3 +1,4 @@
+// resources/js/constants/index.js
 import { MdDashboard } from "react-icons/md";
 import { FcStatistics } from "react-icons/fc";
 import { TfiNotepad } from "react-icons/tfi";
@@ -9,45 +10,50 @@ export const LIST_ASIDE = [
     {
         id: 1,
         title: 'Dashboard',
-        url: '#',
-        icon: MdDashboard
+        route: 'dashboard',
+        icon: MdDashboard,
+        permission: ['admin_kecamatan', 'admin_desa']
     },
     {
         id: 2,
         title: 'Kelola Data Kecamatan',
-        url: '#',
-        icon: FcStatistics
+        route: 'data-kecamatan.index',
+        icon: FcStatistics,
+        permission: ['admin_kecamatan']
     },
     {
         id: 3,
         title: 'Kelola Data Desa',
-        url: '#',
-        icon: TfiNotepad
+        route: 'data-desa.index',
+        icon: TfiNotepad,
+        permission: ['admin_kecamatan', 'admin_desa']
     },
     {
         id: 4,
         title: 'Kelola Data Spasial',
-        url: '#',
-        icon: FcStatistics
+        route: 'data-spasial.index',
+        icon: FcStatistics,
+        permission: ['admin_kecamatan', 'admin_desa']
     },
     {
         id: 5,
         title: 'Kelola Data Kategori',
-        url: '#',
-        icon: GiHamburgerMenu
+        route: 'data-kategori.index',
+        icon: GiHamburgerMenu,
+        permission: ['admin_kecamatan', 'admin_desa']
     },
     {
         id: 6,
         title: 'Kelola Akun Admin',
-        url: '#',
-        icon: MdManageAccounts
-
+        route: 'akun-admin.index',
+        icon: MdManageAccounts,
+        permission: ['admin_kecamatan']
     },
     {
-        id:7,
+        id: 7,
         title: 'Logout',
-        url: '#',
-        icon: IoLogOutSharp
-
+        route: 'logout',
+        icon: IoLogOutSharp,
+        permission: ['admin_kecamatan', 'admin_desa']
     }
-]
+];
