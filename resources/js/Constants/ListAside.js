@@ -17,7 +17,7 @@ export const LIST_ASIDE = [
     {
         id: 2,
         title: 'Kelola Data Kecamatan',
-        route: 'data-kecamatan.index',
+        route: 'subdistricts.index',
         icon: FcStatistics,
         permission: ['admin_kecamatan']
     },

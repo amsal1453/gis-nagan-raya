@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SubdistirictController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -22,6 +23,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::middleware(['role:admin_kecamatan'])->group(function (){
+        Route::resource('subdistricts', SubdistirictController::class);
+
+    });
+
+
 });
 
 Route::get('/users', function () {
@@ -40,9 +48,7 @@ Route::get('/desa', function () {
     return Inertia::render('desa/Index');
 })->middleware(['auth', 'verified'])->name('data-desa.index');
 
-Route::get('/kecamatan', function () {
-    return Inertia::render('kecamtan/Index');
-})->middleware(['auth', 'verified'])->name('data-kecamatan.index');
+
 
 
 

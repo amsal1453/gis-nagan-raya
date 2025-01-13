@@ -13,11 +13,11 @@ const Aside = () => {
         return hasPermission;
     });
 
-    console.log('Final Filtered Menu:', filteredMenu);
+ 
 
     
     return (
-        <aside className='relative top-0 left-0 w-1/5 h-screen bg-primary'>
+        <aside className='relative top-0 left-0 w-1/5 min-h-full bg-primary'>
             <div className='absolute left-0 flex items-center justify-center w-full h-16 text-center top-5 bg-primary'>
                 <h1 className='text-2xl font-bold text-black bg-[#ffff] w-full'>MAIN NAVIGATION</h1>
             </div>

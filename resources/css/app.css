@@ -2,11 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'leaflet/dist/leaflet.css';
+@import 'leaflet-draw/dist/leaflet.draw.css';
+
 :root {
     --primary-color: #08244d;
     --secondary-color: #ffff;
     --hover-color: #0080ff;
-    --text-primary: #ecf9ff;    
+    --text-primary: #ecf9ff;
     --text-secondry: #08244d;
 }
 
