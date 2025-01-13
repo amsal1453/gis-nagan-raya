@@ -5,7 +5,9 @@ import { LIST_ASIDE } from '@/Constants/ListAside';
 const Aside = () => {
     const { auth } = usePage().props;
     const userRole = auth?.roles?.[0] || '';
-    console.log('Current User Role:', userRole);
+    
+    console.log(userRole)
+    
 
     const filteredMenu = LIST_ASIDE.filter(item => {
         const hasPermission = item.permission.includes(userRole);

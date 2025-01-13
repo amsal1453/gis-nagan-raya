@@ -8,16 +8,18 @@ const Index = ({ subdistricts }) => {
   return (
     <MainLayout>
           <Head title="Subdistricts" />
+          
+     
 
           <div className="py-12">
-              <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                  <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+              <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                  <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                       <div className="p-6 bg-white border-b border-gray-200">
-                          <div className="flex justify-between items-center mb-6">
+                          <div className="flex items-center justify-between mb-6">
                               <h2 className="text-2xl font-semibold">Subdistricts</h2>
                               <Link
                                   href="/subdistricts/create"
-                                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                  className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
                               >
                                   Add New Subdistrict
                               </Link>
@@ -28,7 +30,7 @@ const Index = ({ subdistricts }) => {
                               <MapContainer
                                   center={[4.1416, 96.5096]} // Jakarta center coordinates
                                   zoom={10}
-                                  className="h-full w-full"
+                                  className="w-full h-full"
                               >
                                   <TileLayer
                                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -54,13 +56,13 @@ const Index = ({ subdistricts }) => {
                           <table className="min-w-full divide-y divide-gray-200">
                               <thead className="bg-gray-50">
                                   <tr>
-                                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                           Name
                                       </th>
-                                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                           Code
                                       </th>
-                                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                      <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                           Actions
                                       </th>
                                   </tr>
@@ -77,7 +79,7 @@ const Index = ({ subdistricts }) => {
                                           <td className="px-6 py-4 whitespace-nowrap">
                                               <Link
                                                   href={`/subdistricts/${subdistrict.id}/edit`}
-                                                  className="text-indigo-600 hover:text-indigo-900 mr-4"
+                                                  className="mr-4 text-indigo-600 hover:text-indigo-900"
                                               >
                                                   Edit
                                               </Link>
