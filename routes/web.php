@@ -25,8 +25,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware(['role:admin_kecamatan'])->group(function (){
-        Route::resource('subdistricts', SubdistirictController::class);
 
+       Route::get('/subdistricts', [SubdistirictController::class,  'index'])->name('subdistricts.index');
+       Route::get('/subdistricts/create', [SubdistirictController::class,  'create'])->name('subdistricts.create');
+       Route::post('/subdistricts', [SubdistirictController::class,  'store'])->name('subdistricts.store');
+
+        Route::get('/subdistricts/{subdistrict}/edit', [SubdistirictController::class, 'edit'])->name('subdistrict.edit');
+        Route::put('/subdistricts/{subdistrict}', [SubdistirictController::class, 'update'])->name('subdistrict.update');
+
+        Route::delete('/subdistricts/{id}', [SubdistirictController::class, 'destroy'])->name('subdistrict.destroy');
     });
 
 

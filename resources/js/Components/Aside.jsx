@@ -6,7 +6,6 @@ const Aside = () => {
     const { auth } = usePage().props;
     const userRole = auth?.roles?.[0] || '';
     
-    console.log(userRole)
     
 
     const filteredMenu = LIST_ASIDE.filter(item => {

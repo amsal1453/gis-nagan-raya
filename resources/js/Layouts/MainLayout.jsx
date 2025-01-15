@@ -27,7 +27,7 @@ const MainLayout = ({ children }) => {
 
                     {/* Main Content */}
                     <main className="relative z-10 flex-1 p-8 overflow-y-auto">
-                        <div className="container mx-auto">
+                        <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                                 {children}               
                         </div>
                     </main>

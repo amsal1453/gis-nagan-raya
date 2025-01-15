@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name_subdistrict');
             $table->string('code_subdistrict');
-            $table->geometry('boundary_subdistrict');
+            $table->geometry('boundary_subdistrict', 'polygon', srid: 4326);
             $table->timestamps();
         });
     }
