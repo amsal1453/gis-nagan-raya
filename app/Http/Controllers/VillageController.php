@@ -35,4 +35,13 @@ class VillageController extends Controller
             ]
         ]);
     }
+
+    public function create()
+    {
+        $this->authorize('create', Village::class);
+
+        return Inertia::render('Villages/Create', [
+            'subdistricts' => Subdistrict::select('id', 'name_subdistrict')->get()
+        ]);
+    }
 }

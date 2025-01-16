@@ -55,7 +55,7 @@ const Index = ({ villages, can }) => {
                 <div className="h-[500px] relative">
                     <MapContainer
                         center={[4.1416, 96.5096]}
-                        zoom={10}
+                        zoom={14}
                         className="w-full h-full"
                     >
                         <TileLayer
@@ -87,7 +87,7 @@ const Index = ({ villages, can }) => {
                         <h2 className="text-xl font-semibold">Daftar Desa</h2>
                         {can.create && (
                             <button
-                                onClick={() => Inertia.get(route('villages.create'))}
+                                onClick={() => Inertia.get(route('village.create'))}
                                 className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
                             >
                                 Tambah Desa
