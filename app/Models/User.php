@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -23,6 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'village_id'
     ];
 
     /**
@@ -50,6 +52,11 @@ class User extends Authenticatable
 
     public function spatialData(): HasMany
     {
-        return $this->hasMany(SpatialData::class, 'created_by');  
+        return $this->hasMany(SpatialData::class, 'created_by');
+    }
+
+    public function village(): BelongsTo
+    {
+        return $this->belongsTo(Village::class);
     }
 }

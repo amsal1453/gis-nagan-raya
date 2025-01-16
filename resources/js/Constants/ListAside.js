@@ -24,7 +24,7 @@ export const LIST_ASIDE = [
     {
         id: 3,
         title: 'Kelola Data Desa',
-        route: 'data-desa.index',
+        route: 'village.index',
         icon: TfiNotepad,
         permission: ['admin_kecamatan', 'admin_desa']
     },

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubdistirictController;
+use App\Http\Controllers\VillageController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -36,6 +37,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/subdistricts/{id}', [SubdistirictController::class, 'destroy'])->name('subdistrict.destroy');
     });
 
+        Route::middleware(['role:admin_kecamatan|admin_desa'])->group(function () {
+            Route::resource('/village', VillageController::class);
+        });
+
+
 
 });
 
@@ -51,9 +57,7 @@ Route::get('/spasial', function () {
     return Inertia::render('spasial/Index');
 })->middleware(['auth', 'verified'])->name('data-spasial.index');
 
-Route::get('/desa', function () {
-    return Inertia::render('desa/Index');
-})->middleware(['auth', 'verified'])->name('data-desa.index');
+
 
 
 

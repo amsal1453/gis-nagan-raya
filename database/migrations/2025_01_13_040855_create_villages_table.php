@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('subdistrict_id')->constrained('subdistricts')->onDelete('cascade');
             $table->string('name_village');
             $table->string('code_village');
-            $table->geometry('boundary_village');
+            $table->geometry('boundary_subdistrict', 'polygon', srid: 4326);
             $table->timestamps();
         });
     }

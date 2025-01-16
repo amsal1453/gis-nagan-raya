@@ -68,11 +68,10 @@ const Index = ({ subdistricts }) => {
                                       key={subdistrict.id}
                                       data={geoJsonData}
                                       style={{
-                                          fillColor: '#3388ff',
-                                          weight: 2,
-                                          opacity: 1,
-                                          color: 'white',
-                                          fillOpacity: 0.7
+                                          weight: 2,         // Ketebalan garis
+                                          color: '#3388ff',  // Warna garis batas
+                                          opacity: 1,        // Transparansi garis
+                                          fillOpacity: 0 
                                       }}
                                   />
                               );

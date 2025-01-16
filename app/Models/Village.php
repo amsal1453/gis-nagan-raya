@@ -28,4 +28,9 @@ class Village extends Model
     {
         return $this->hasMany(SpatialData::class, 'village_id');
     }
+
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class);
+    }
 }
