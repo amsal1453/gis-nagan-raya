@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import { MapContainer, TileLayer, FeatureGroup, ZoomControl } from 'react-leaflet';
+import { MapContainer, TileLayer, FeatureGroup } from 'react-leaflet';
 import { EditControl } from 'react-leaflet-draw';
-import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
+import MainLayout from '@/Layouts/MainLayout';
+import Breadcrumbs from '@/Components/Breadcrumbs';
 
 export default function Create({ subdistricts }) {
-    const [boundaries, setBoundaries] = useState([]);
-    const [map, setMap] = useState(null);
-    
     const { data, setData, post, processing, errors } = useForm({
         subdistrict_id: '',
         name_village: '',
@@ -17,92 +15,50 @@ export default function Create({ subdistricts }) {
         boundary_village: []
     });
 
+    const handleCreated = (e) => {
+        const layer = e.layer;
+        const geoJSON = layer.toGeoJSON();
+        const geometry = geoJSON.geometry;
+        setData('boundary_village', JSON.stringify(geometry));
+    };
+
+    const handleEdited = (e) => {
+        const layers = e.layers;
+        layers.eachLayer((layer) => {
+            const geoJSON = layer.toGeoJSON();
+            const geometry = geoJSON.geometry;
+            setData('boundary_village', JSON.stringify(geometry));
+        });
+    };
+
+    const handleDeleted = () => {
+        setData('boundary_village', null);
+    };
+
     const onSubmit = (e) => {
         e.preventDefault();
-        post(route('villages.store'));
+        post(route(("village.index")), {
+            onSuccess: () => alert('village created successfully!'),
+        });
     };
 
-    const handleCreated = (e) => {
-        const { layerType, layer } = e;
-        if (layerType === 'polygon') {
-            const coordinates = layer.getLatLngs()[0];
-            setData('boundary_village', coordinates.map(coord => ({
-                lat: coord.lat,
-                lng: coord.lng
-            })));
-            setBoundaries([...boundaries, layer]);
-        }
-    };
-
-    // Konfigurasi drawing tools yang sudah diperbaiki
-    const drawOptions = {
-        position: 'topright',
-        polygon: {
-            allowIntersection: false,
-            showArea: true,
-            drawError: {
-                color: '#e1e100',
-                message: '<strong>Polygon tidak boleh berpotongan!</strong>'
-            },
-            shapeOptions: {
-                color: '#3388ff',
-                weight: 3,
-                opacity: 0.7,
-                fillOpacity: 0.2,
-                clickable: true
-            },
-            guide: {
-                color: '#00ff00',
-                weight: 1,
-                opacity: 0.5,
-                dashArray: '5, 5'
-            },
-            repeatMode: true,  // Bisa menggambar polygon berulang kali
-            metric: true,      // Menampilkan ukuran dalam meter
-        },
-        rectangle: false,
-        circle: false,
-        circlemarker: false,
-        marker: false,
-        polyline: false
-    };
-
-    const editOptions = {
-        featureGroup: boundaries,
-        edit: {
-            selectedPathOptions: {
-                maintainColor: true,
-                opacity: 0.6,
-                dashArray: '10, 10',
-                fillOpacity: 0.1,
-            }
-        },
-        remove: true,
-    };
-
-    // Inisialisasi custom handlers untuk drawing
-    React.useEffect(() => {
-        if (!map) return;
-
-        // Override default draw handlers
-        L.Draw.Polygon.prototype._calculateFinishDistance = function(t) {
-            if (this._markers.length > 2) {
-                const first = this._map.latLngToContainerPoint(this._markers[0].getLatLng());
-                const last = this._map.latLngToContainerPoint(t);
-                return Math.min(first.distanceTo(last), Infinity);
-            }
-            return Infinity;
-        };
-    }, [map]);
+    const breadCrumbsPath = [
+        { label: 'Village', link: '/village' },
+        { label: 'Create' }
+    ]
 
     return (
-        <>
+        <MainLayout>
             <Head title="Create Village" />
-            
-            <div className="py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+
+            <div className='p-4 mb-6 text-white rounded-md shadow-md bg-primary'>
+                <Breadcrumbs items={breadCrumbsPath} />
+            </div>
+
+            <div className="py-6 mx-auto rounded-md max-w-7xl sm:px-6 lg:px-8 bg-primary">
                 <form onSubmit={onSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-100">
                             Subdistrict
                         </label>
                         <select
@@ -123,7 +79,7 @@ export default function Create({ subdistricts }) {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-100">
                             Village Name
                         </label>
                         <input
@@ -138,7 +94,7 @@ export default function Create({ subdistricts }) {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-100">
                             Village Code
                         </label>
                         <input
@@ -153,7 +109,7 @@ export default function Create({ subdistricts }) {
                     </div>
 
                     <div>
-                        <label className="block mb-2 text-sm font-medium text-gray-700">
+                        <label className="block mb-2 text-sm font-medium text-gray-100">
                             Village Boundary
                         </label>
                         <div className="mt-1" style={{ height: '600px' }}>
@@ -161,44 +117,43 @@ export default function Create({ subdistricts }) {
                                 center={[4.0619633, 96.2407869]}
                                 zoom={13}
                                 style={{ height: '100%', width: '100%' }}
-                                zoomControl={false}
-                                whenCreated={setMap}
                             >
                                 <TileLayer
                                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                                 />
-                                
+
                                 <TileLayer
                                     url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                                     attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
                                     opacity={0.5}
                                 />
 
-                                <ZoomControl position="topright" />
-
-                                <FeatureGroup ref={(featureGroupRef) => {
-                                    if (featureGroupRef) {
-                                        setBoundaries(featureGroupRef);
-                                    }
-                                }}>
+                                <FeatureGroup>
                                     <EditControl
                                         position="topright"
                                         onCreated={handleCreated}
-                                        draw={drawOptions}
-                                        edit={editOptions}
+                                        onEdited={handleEdited}
+                                        onDeleted={handleDeleted}
+                                        draw={{
+                                            rectangle: false,
+                                            circle: false,
+                                            circlemarker: false,
+                                            marker: false,
+                                            polyline: false,
+                                            polygon: true  // Simplified polygon configuration
+                                        }}
                                     />
                                 </FeatureGroup>
                             </MapContainer>
                         </div>
-                        <div className="mt-2 text-sm text-gray-500">
+                        <div className="mt-2 text-sm text-gray-300">
                             * Klik untuk menambah titik polygon, double klik untuk menyelesaikan polygon
                         </div>
                         {errors.boundary_village && (
                             <p className="mt-1 text-sm text-red-600">{errors.boundary_village}</p>
                         )}
                     </div>
-
                     <div>
                         <button
                             type="submit"
@@ -210,6 +165,6 @@ export default function Create({ subdistricts }) {
                     </div>
                 </form>
             </div>
-        </>
+        </MainLayout>
     );
 }

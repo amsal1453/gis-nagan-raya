@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,9 +16,13 @@ class Village extends Model
         'boundary_village',
     ];
 
-    protected $geometry = [
-        'boundary_village',
-    ];
+    public function getBoundaryVillageAttribute($value)
+    {
+        if ($value) {
+            return DB::select("SELECT ST_AsGeoJSON(?) as geojson", [$value])[0]->geojson;
+        }
+        return null;
+    }
 
     public function subdistrict(): BelongsTo
     {

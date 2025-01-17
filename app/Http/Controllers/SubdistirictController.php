@@ -27,7 +27,7 @@ class SubdistirictController extends Controller
 
     public function store(Request $request)
     {
-        // SubdistrictController.php
+       
         $data = $request->validate([
             'name_subdistrict' => 'required|string',
             'code_subdistrict' => 'required|string',
@@ -36,11 +36,11 @@ class SubdistirictController extends Controller
 
         try {
             $boundary = json_decode($data['boundary_subdistrict'], true);
-            // Pastikan data sudah dalam format GeoJSON lengkap
+            
             if (!isset($boundary['type']) || !isset($boundary['coordinates'])) {
                 $boundary = [
                     'type' => 'Polygon',
-                    'coordinates' => [$boundary]  // Wrap dalam array jika hanya coordinates
+                    'coordinates' => [$boundary]  
                 ];
             }
 

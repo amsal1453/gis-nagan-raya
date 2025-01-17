@@ -14,7 +14,7 @@ const Create = () => {
         boundary_subdistrict: null,
     });
 
-    console.log(data.boundary_subdistrict)
+   
 
     const [coordinates, setCoordinates] = useState('');
     const [showCoordinateInput, setShowCoordinateInput] = useState(false);

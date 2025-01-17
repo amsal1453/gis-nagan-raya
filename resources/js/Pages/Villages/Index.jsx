@@ -7,7 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import { Inertia } from '@inertiajs/inertia';
 
 const Index = ({ villages, can }) => {
-
+    console.log(villages)
 
     const BreadcrumbsPath = [
         { label: 'Village', link: '/village' },
@@ -62,10 +62,21 @@ const Index = ({ villages, can }) => {
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
-                        {villages.map((village) => (
+                        <TileLayer
+                            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                            attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                            opacity={0.6}
+                        />
+                        {villages.map((village) => {
+
+                            const geoJsonData = typeof village.boundary_village === 'string'
+                                ? JSON.parse(village.boundary_village)
+                                : village.boundary_village;
+
+                            return (
                             <GeoJSON
                                 key={village.id}
-                                data={village.boundary_subdistrict}
+                                    data={geoJsonData}
                                 style={villageStyle}
                                 onEachFeature={(feature, layer) => {
                                     layer.on({
@@ -76,7 +87,8 @@ const Index = ({ villages, can }) => {
                                     layer.bindPopup(village.name_village);
                                 }}
                             />
-                        ))}
+                            )
+                        })}
                     </MapContainer>
                 </div>
             </div>
@@ -139,6 +151,12 @@ const Index = ({ villages, can }) => {
                                                         Hapus
                                                     </button>
                                                 )}
+                                                <button
+                                                onClick={() => Inertia.get(route('village.show', village.id))} 
+                                                
+                                                className='px-3 py-1 text-white bg-blue-500 rounded hover:bg-blue-700 '> 
+                                                    Detail
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
