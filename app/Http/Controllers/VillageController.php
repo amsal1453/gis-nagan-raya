@@ -80,7 +80,7 @@ class VillageController extends Controller
     }
 
 
-    public function show(Village $village): Inertia
+    public function show(Village $village)
     {
 
         $village->load('subdistrict');
@@ -99,5 +99,53 @@ class VillageController extends Controller
                 'updated_at' => $village->updated_at
             ]
         ]);
+    }
+
+    public function edit(Village $village){
+
+        return Inertia::render('Villages/Edit', [
+            'village' => $village,
+            'subdistricts' => Subdistrict::all()
+        ]);
+    }
+
+    public function update(Request $request, Village $village)
+    {
+        $data = $request->validate([
+            'subdistrict_id' => 'required|exists:subdistricts,id',
+            'name_village' => 'required|string',
+            'code_village' => 'required|string',
+            'boundary_village' => 'required|json',
+        ]);
+
+        try {
+            $boundary = json_decode($data['boundary_village'], true);
+
+            // Check if the boundary needs to be restructured
+            if (!isset($boundary['type']) || !isset($boundary['coordinates'])) {
+                $boundary = [
+                    'type' => 'Polygon',
+                    'coordinates' => [$boundary]
+                ];
+            }
+
+            $village->update([
+                'subdistrict_id' => $data['subdistrict_id'],
+                'name_village' => $data['name_village'],
+                'code_village' => $data['code_village'],
+                'boundary_village' => DB::raw("ST_GeomFromGeoJSON('" . json_encode($boundary) . "')"),
+            ]);
+
+            return redirect()->route('village.index')->with('success', 'Data berhasil diperbarui');
+        } catch (\Exception $e) {
+            return back()->withErrors(['message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
+
+    public function destroy(Village $village)
+    {
+        $village->delete();
+
+        return redirect()->route('village.index')->with('success', 'Data berhasil di hapus');
     }
 }

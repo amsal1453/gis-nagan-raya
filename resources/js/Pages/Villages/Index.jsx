@@ -1,13 +1,13 @@
 import Breadcrumbs from '@/Components/Breadcrumbs'
 import MainLayout from '@/Layouts/MainLayout'
 import { Head, usePage } from '@inertiajs/react'
-import React from 'react'
+import React, { useState } from 'react'
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
 import { Inertia } from '@inertiajs/inertia';
 
 const Index = ({ villages, can }) => {
-    console.log(villages)
+
 
     const BreadcrumbsPath = [
         { label: 'Village', link: '/village' },
@@ -15,7 +15,7 @@ const Index = ({ villages, can }) => {
     ]
 
     // State untuk tracking village yang di-hover
-    const [activeVillage, setActiveVillage] = React.useState(null);
+    const [activeVillage, setActiveVillage] = useState(null);
 
     // Style untuk GeoJSON
     const villageStyle = {
@@ -65,7 +65,7 @@ const Index = ({ villages, can }) => {
                         <TileLayer
                             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                             attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-                            opacity={0.6}
+                            opacity={0.5}
                         />
                         {villages.map((village) => {
 
@@ -92,7 +92,7 @@ const Index = ({ villages, can }) => {
                     </MapContainer>
                 </div>
             </div>
-            
+
             <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div className="p-6 bg-white border-b border-gray-200">
                     <div className="flex justify-between mb-4">
@@ -106,7 +106,7 @@ const Index = ({ villages, can }) => {
                             </button>
                         )}
                     </div>
-                    
+
 
                     <div className="overflow-x-auto">
                         <table className="min-w-full">
@@ -133,7 +133,7 @@ const Index = ({ villages, can }) => {
                                             <div className="flex gap-2">
                                                 {can.edit && (
                                                     <button
-                                                        onClick={() => Inertia.get(route('villages.edit', village.id))}
+                                                        onClick={() => Inertia.get(route('village.edit', village.id))}
                                                         className="px-3 py-1 text-white bg-yellow-500 rounded hover:bg-yellow-600"
                                                     >
                                                         Edit
@@ -142,8 +142,9 @@ const Index = ({ villages, can }) => {
                                                 {can.delete && (
                                                     <button
                                                         onClick={() => {
+
                                                             if (confirm('Apakah Anda yakin ingin menghapus desa ini?')) {
-                                                                Inertia.delete(route('villages.destroy', village.id));
+                                                                Inertia.delete(route('village.destroy', village.id));
                                                             }
                                                         }}
                                                         className="px-3 py-1 text-white bg-red-500 rounded hover:bg-red-600"
@@ -152,9 +153,9 @@ const Index = ({ villages, can }) => {
                                                     </button>
                                                 )}
                                                 <button
-                                                onClick={() => Inertia.get(route('village.show', village.id))} 
-                                                
-                                                className='px-3 py-1 text-white bg-blue-500 rounded hover:bg-blue-700 '> 
+                                                onClick={() => Inertia.get(route('village.show', village.id))}
+
+                                                className='px-3 py-1 text-white bg-blue-500 rounded hover:bg-blue-700 '>
                                                     Detail
                                                 </button>
                                             </div>
