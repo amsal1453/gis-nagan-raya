@@ -45,7 +45,7 @@ export const LIST_ASIDE = [
     {
         id: 6,
         title: 'Kelola Akun Admin',
-        route: 'akun-admin.index',
+        route: 'users.index',
         icon: MdManageAccounts,
         permission: ['admin_kecamatan']
     },

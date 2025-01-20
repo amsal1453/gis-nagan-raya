@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubdistirictController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VillageController;
 
 Route::get('/', function () {
@@ -30,11 +31,11 @@ Route::middleware('auth')->group(function () {
        Route::get('/subdistricts', [SubdistirictController::class,  'index'])->name('subdistricts.index');
        Route::get('/subdistricts/create', [SubdistirictController::class,  'create'])->name('subdistricts.create');
        Route::post('/subdistricts', [SubdistirictController::class,  'store'])->name('subdistricts.store');
-
         Route::get('/subdistricts/{subdistrict}/edit', [SubdistirictController::class, 'edit'])->name('subdistrict.edit');
         Route::put('/subdistricts/{subdistrict}', [SubdistirictController::class, 'update'])->name('subdistrict.update');
-
         Route::delete('/subdistricts/{id}', [SubdistirictController::class, 'destroy'])->name('subdistrict.destroy');
+
+        Route::resource('/users', UserController::class);
     });
 
         Route::middleware(['role:admin_kecamatan|admin_desa'])->group(function () {
@@ -45,9 +46,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
-Route::get('/users', function () {
-    return Inertia::render('Users/Index');
-})->middleware(['auth', 'verified'])->name('akun-admin.index');
+
 
 Route::get('/categori', function () {
     return Inertia::render('Categori/Index');
