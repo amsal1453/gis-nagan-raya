@@ -23,7 +23,7 @@ class UserController extends Controller
                         'email' => $user->email,
                         'village' => $user->village ? [
                             'id' => $user->village->id,
-                            'name' => $user->village->name
+                            'name' => $user->village->name_village
                         ] : null,
                         'role' => $user->roles->first() ? $user->roles->first()->name : 'No Role'
                     ];
@@ -61,5 +61,54 @@ class UserController extends Controller
 
         return redirect()->route('users.index')
             ->with('success', 'User berhasil dibuat');
+    }
+
+    public function edit(User $user){
+
+        return Inertia::render('Users/Edit', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'village_id' => $user->village_id,
+                'role' => $user->roles->first() ? $user->roles->first()->name : null
+            ],
+            'villages' => Village::all(),
+            'roles' => Role::all()
+        ]);
+
+    }
+    public function update(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'role' => 'required|exists:roles,name',
+            'village_id' => 'required_if:role,admin_desa|exists:villages,id',
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'village_id' => $request->village_id,
+        ]);
+
+        // Update password jika diisi
+        if ($request->filled('password')) {
+            $user->update(['password' => Hash::make($request->password)]);
+        }
+
+        // Update role
+        $user->syncRoles([$request->role]);
+
+        return redirect()->route('users.index')
+        ->with('success', 'User berhasil diperbarui');
+    }
+
+    public function destroy(User $user){
+        $user->delete();
+        return redirect()->route('users.index')
+        ->with('success', 'user berhasil di hapus');
     }
 }

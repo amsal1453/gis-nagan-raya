@@ -5,14 +5,14 @@ import { useEffect } from 'react';
 import MainLayout from '@/Layouts/MainLayout';
 import Breadcrumbs from '@/Components/Breadcrumbs';
 
-export default function Create({ auth, villages, roles }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        email: '',
+export default function Edit({ auth, user, villages, roles }) {
+    const { data, setData, put, processing, errors } = useForm({
+        name: user.name,
+        email: user.email,
         password: '',
         password_confirmation: '',
-        role: '',
-        village_id: ''
+        role: user.role,
+        village_id: user.village_id || ''
     });
 
     // Reset village_id when role changes
@@ -24,26 +24,22 @@ export default function Create({ auth, villages, roles }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post(route('users.store'), {
-            onSuccess: () => reset()
-        });
+        put(route('users.update', user.id));
     };
 
-   const breadCrumbsPath =[
-    {label: "Users", link: '/users'},
-    {label: 'Create'}
-   ]
+    const breadCrumbsPath = [
+        {label: 'Users', link: '/users'},
+        {label: 'Edit'}
+
+    ]
 
     return (
         <MainLayout>
-            <Head title="Tambah User" />
-            <div className='p-4 mb-6 text-white rounded-md shadow-md bg-primary'>
+            <Head title="Edit User" />
+            <div className='p-4 text-white rounded-md shadow-md bg-primary'>
                 <Breadcrumbs items={breadCrumbsPath}/>
             </div>
-            
-
-
-                    <div className="overflow-hidden shadow-sm bg-primary sm:rounded-lg">
+                    <div className="mt-6 overflow-hidden shadow-sm bg-primary sm:rounded-lg">
                         <div className="p-6">
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 {/* Nama */}
@@ -78,10 +74,10 @@ export default function Create({ auth, villages, roles }) {
                                     }
                                 </div>
 
-                                {/* Password */}
+                                {/* Password (Optional) */}
                                 <div>
                                     <label className="block text-sm font-medium text-gray-100">
-                                        Password
+                                        Password (Kosongkan jika tidak ingin mengubah)
                                     </label>
                                     <input
                                         type="password"
@@ -95,17 +91,19 @@ export default function Create({ auth, villages, roles }) {
                                 </div>
 
                                 {/* Password Confirmation */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-100">
-                                        Konfirmasi Password
-                                    </label>
-                                    <input
-                                        type="password"
-                                        className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                        value={data.password_confirmation}
-                                        onChange={e => setData('password_confirmation', e.target.value)}
-                                    />
-                                </div>
+                                {data.password && (
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-100">
+                                            Konfirmasi Password
+                                        </label>
+                                        <input
+                                            type="password"
+                                            className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                            value={data.password_confirmation}
+                                            onChange={e => setData('password_confirmation', e.target.value)}
+                                        />
+                                    </div>
+                                )}
 
                                 {/* Role Selection */}
                                 <div>
@@ -153,12 +151,12 @@ export default function Create({ auth, villages, roles }) {
                                     </div>
                                 )}
 
-                                {/* Submit Button */}
+                                {/* Submit and Cancel Buttons */}
                                 <div className="flex items-center justify-end space-x-3">
                                     <button
                                         type="button"
                                         onClick={() => window.history.back()}
-                                        className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                        className="px-4 py-2 text-sm font-medium text-gray-100 border border-gray-300 rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                     >
                                         Batal
                                     </button>
@@ -167,14 +165,12 @@ export default function Create({ auth, villages, roles }) {
                                         disabled={processing}
                                         className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                     >
-                                        {processing ? 'Menyimpan...' : 'Simpan'}
+                                        {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
-
-
         </MainLayout>
     );
 }

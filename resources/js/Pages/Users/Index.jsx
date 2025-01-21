@@ -4,7 +4,7 @@ import { Inertia } from '@inertiajs/inertia'
 import { Head, Link } from '@inertiajs/react'
 import React, { useState } from 'react'
 
-const Index = ({ auth, users, roles }) => {
+const Index = ({ users, roles }) => {
     const breadCrumbsPath = [
         { label: 'User', link: '/users' },
         { label: 'List' }
@@ -22,6 +22,17 @@ const Index = ({ auth, users, roles }) => {
 
         return matchSearch && matchRole;
     });
+
+    const handleDelete = (id) => {
+      
+        if (confirm('apakah anda yakin menghapus user ini ?')) {
+            Inertia.delete(route('users.destroy', id), {
+                onSuccess: () => alert('user berhasil di hapus')
+            })
+        }
+    }
+    
+    console.log(users)
 
     return (
         <MainLayout>
@@ -110,12 +121,22 @@ const Index = ({ auth, users, roles }) => {
                                             {user.village ? user.village.name : '-'}
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium whitespace-nowrap">
+                                            <div className='flex items-center justify-center gap-4'>
+
                                             <Link
                                                 href={route('users.edit', user.id)}
-                                                className="mr-4 text-indigo-600 hover:text-indigo-900"
+                                                    className="text-indigo-600 hover:text-indigo-900"
                                             >
                                                 Edit
                                             </Link>
+                                                <button
+                                                    onClick={() => handleDelete(user.id)}
+                                                    className='text-red-500 hover:text-red-700 hover:underline'>
+                                                    Delete
+                                                </button>
+
+                                            </div>
+
                                         </td>
                                     </tr>
                                 ))}
