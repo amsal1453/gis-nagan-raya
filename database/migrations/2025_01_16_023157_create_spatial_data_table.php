@@ -16,7 +16,10 @@ return new class extends Migration
             $table->foreignId('subdistrict_id')->constrained('subdistricts')->onDelete('cascade');
             $table->foreignId('village_id')->constrained('villages')->onDelete('cascade');
             $table->string('name_spatial');
-            $table->geometry('boundary_spatial');
+            $table->text('description')->nullable();
+            $table->geometry('location', subtype: 'point')->nullable();
+            $table->geometry('area', subtype: 'polygon')->nullable();
+            $table->geometry('line', subtype: 'LineString')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
