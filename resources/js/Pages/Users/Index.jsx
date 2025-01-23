@@ -32,7 +32,7 @@ const Index = ({ users, roles }) => {
         }
     }
     
-    console.log(users)
+   
 
     return (
         <MainLayout>

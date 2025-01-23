@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoriController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -26,11 +27,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::middleware(['role:admin_kecamatan'])->group(function (){
+    Route::middleware(['role:admin_kecamatan'])->group(function () {
 
-       Route::get('/subdistricts', [SubdistirictController::class,  'index'])->name('subdistricts.index');
-       Route::get('/subdistricts/create', [SubdistirictController::class,  'create'])->name('subdistricts.create');
-       Route::post('/subdistricts', [SubdistirictController::class,  'store'])->name('subdistricts.store');
+        Route::get('/subdistricts', [SubdistirictController::class,  'index'])->name('subdistricts.index');
+        Route::get('/subdistricts/create', [SubdistirictController::class,  'create'])->name('subdistricts.create');
+        Route::post('/subdistricts', [SubdistirictController::class,  'store'])->name('subdistricts.store');
         Route::get('/subdistricts/{subdistrict}/edit', [SubdistirictController::class, 'edit'])->name('subdistrict.edit');
         Route::put('/subdistricts/{subdistrict}', [SubdistirictController::class, 'update'])->name('subdistrict.update');
         Route::delete('/subdistricts/{id}', [SubdistirictController::class, 'destroy'])->name('subdistrict.destroy');
@@ -38,19 +39,15 @@ Route::middleware('auth')->group(function () {
         Route::resource('/users', UserController::class);
     });
 
-        Route::middleware(['role:admin_kecamatan|admin_desa'])->group(function () {
-            Route::resource('/village', VillageController::class);
-        });
-
-
-
+    Route::middleware(['role:admin_kecamatan|admin_desa'])->group(function () {
+        Route::resource('/village', VillageController::class);
+        Route::resource('/categories', CategoriController::class);
+    });
 });
 
 
 
-Route::get('/categori', function () {
-    return Inertia::render('Categori/Index');
-})->middleware(['auth', 'verified'])->name('data-kategori.index');
+
 
 Route::get('/spasial', function () {
     return Inertia::render('spasial/Index');
@@ -63,4 +60,4 @@ Route::get('/spasial', function () {
 
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

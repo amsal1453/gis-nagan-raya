@@ -38,7 +38,7 @@ export const LIST_ASIDE = [
     {
         id: 5,
         title: 'Kelola Data Kategori',
-        route: 'data-kategori.index',
+        route: 'categories.index',
         icon: GiHamburgerMenu,
         permission: ['admin_kecamatan', 'admin_desa']
     },
