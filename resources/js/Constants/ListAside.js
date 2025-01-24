@@ -31,7 +31,7 @@ export const LIST_ASIDE = [
     {
         id: 4,
         title: 'Kelola Data Spasial',
-        route: 'data-spasial.index',
+        route: 'spatial-data.index',
         icon: FcStatistics,
         permission: ['admin_kecamatan', 'admin_desa']
     },

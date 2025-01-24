@@ -51,19 +51,19 @@ class SpatialData extends Model
         return $this->belongsToMany(Category::class, 'spatial_categories', 'spatial_id', 'category_id')->withTimestamps();
     }
 
-    // Method untuk membuat Point
+   
     public static function createPoint($latitude, $longitude)
     {
         return new Point($latitude, $longitude);
     }
 
-    // Method untuk membuat Polygon
+    
     public static function createPolygon(array $coordinates)
     {
         return new Polygon($coordinates);
     }
 
-    // Method untuk membuat LineString
+    
     public static function createLineString(array $coordinates)
     {
         return new LineString($coordinates);

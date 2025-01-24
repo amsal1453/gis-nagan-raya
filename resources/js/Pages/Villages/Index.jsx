@@ -167,9 +167,6 @@ const Index = ({ villages, can }) => {
                     </div>
                 </div>
             </div>
-
-
-
         </MainLayout>
     )
 }

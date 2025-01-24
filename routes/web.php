@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SpatialDataController;
 use App\Http\Controllers\SubdistirictController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VillageController;
@@ -42,16 +43,13 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:admin_kecamatan|admin_desa'])->group(function () {
         Route::resource('/village', VillageController::class);
         Route::resource('/categories', CategoriController::class);
+        Route::resource('/spatial-data', SpatialDataController::class);
     });
 });
 
 
 
 
-
-Route::get('/spasial', function () {
-    return Inertia::render('spasial/Index');
-})->middleware(['auth', 'verified'])->name('data-spasial.index');
 
 
 
