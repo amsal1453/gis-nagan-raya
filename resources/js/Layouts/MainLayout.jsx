@@ -5,16 +5,21 @@ import React from 'react';
 
 const MainLayout = ({ children }) => {
     return (
-        <div className="flex flex-col h-screen bg-gray-100 ">
+        <div className="flex flex-col h-screen bg-gray-100">
             {/* Fixed Navbar */}
             <div className="fixed top-0 z-50 w-full">
                 <Navbar />
             </div>
 
             {/* Main Content */}
-            <div className="flex flex-1 mt-20">
-                <Aside />
-                <div className="relative flex flex-col flex-1">
+            <div className="flex flex-1 pt-20"> {/* Tambahkan padding-top untuk Navbar */}
+                {/* Fixed Aside */}
+                <div className="fixed left-0 w-1/5 h-full ">
+                    <Aside />
+                </div>
+
+                {/* Main Content and Footer */}
+                <div className="relative flex flex-col flex-1 ml-[20%]"> {/* Sesuaikan margin-left dengan lebar Aside */}
                     {/* Background Image with Opacity */}
                     <div
                         className="absolute inset-0 bg-[url('/bg.jpg')] bg-cover bg-center"
@@ -28,7 +33,7 @@ const MainLayout = ({ children }) => {
                     {/* Main Content */}
                     <main className="relative z-10 flex-1 p-8 overflow-y-auto">
                         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                                {children}               
+                            {children}
                         </div>
                     </main>
 

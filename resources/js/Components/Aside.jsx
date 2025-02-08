@@ -5,24 +5,18 @@ import { LIST_ASIDE } from '@/Constants/ListAside';
 const Aside = () => {
     const { auth } = usePage().props;
     const userRole = auth?.roles?.[0] || '';
-    
-    
 
     const filteredMenu = LIST_ASIDE.filter(item => {
         const hasPermission = item.permission.includes(userRole);
-       
         return hasPermission;
     });
 
- 
-
-    
     return (
-        <aside className='relative top-0 left-0 w-1/5 min-h-full bg-primary'>
+        <aside className='fixed top-0 left-0  h-screen bg-primary overflow-y-auto mt-16'>
             <div className='absolute left-0 flex items-center justify-center w-full h-16 text-center top-5 bg-primary'>
                 <h1 className='text-2xl font-bold text-black bg-[#ffff] w-full'>MAIN NAVIGATION</h1>
             </div>
-            <div className='flex flex-col items-center w-full mt-20'> {/* Tambahkan margin-top agar daftar tidak menutupi judul */}
+            <div className='flex flex-col items-center w-full mt-20'>
                 <ul className="w-full">
                     {filteredMenu.map((item, index) => (
                         <li key={index} className="w-full mb-4 text-lg font-bold text-white">
@@ -46,7 +40,6 @@ const Aside = () => {
                         </li>
                     ))}
                 </ul>
-
             </div>
         </aside>
     );

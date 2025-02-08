@@ -24,15 +24,15 @@ const Index = ({ users, roles }) => {
     });
 
     const handleDelete = (id) => {
-      
+
         if (confirm('apakah anda yakin menghapus user ini ?')) {
             Inertia.delete(route('users.destroy', id), {
                 onSuccess: () => alert('user berhasil di hapus')
             })
         }
     }
-    
-   
+
+
 
     return (
         <MainLayout>
@@ -42,9 +42,9 @@ const Index = ({ users, roles }) => {
             </div>
 
             <div className="overflow-hidden shadow-sm bg-primary sm:rounded-lg">
-                <div className="p-6">
+                <div className="">
                     {/* Search and Filter Controls */}
-                    <div className="flex flex-wrap gap-4 mb-6">
+                    <div className="flex flex-wrap gap-4 mb-6 p-6">
                         <div className="flex-1">
                             <input
                                 type="text"
@@ -79,8 +79,8 @@ const Index = ({ users, roles }) => {
                     </div>
 
                     {/* Users Table */}
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
+                    <div className="overflow-x-auto ">
+                        <table className="min-w-full divide-y divide-gray-200 ">
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
