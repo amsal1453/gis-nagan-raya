@@ -42,9 +42,8 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['role:admin_kecamatan|admin_desa'])->group(function () {
         Route::resource('/village', VillageController::class);
-        Route::resource('/categories', CategoriController::class);
-
-        Route::get('/spatial-data', [SpatialDataController::class, 'index'])->name('spatial-data.index');
+        Route::resource('/categories', CategoriController::class);  
+        Route::resource('/spatial-data', SpatialDataController::class);
 
     });
 });

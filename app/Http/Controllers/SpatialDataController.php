@@ -65,7 +65,9 @@ class SpatialDataController extends Controller
                 'create' => $user->can('kelola-data-spasial'),
                 'edit' => $user->can('kelola-data-spasial'),
                 'delete' => $user->can('kelola-data-spasial'),
-            ]
+            ],
+            'villages' => Village::all(),
+            'categories' => Category::all(),
         ]);
     }
 
