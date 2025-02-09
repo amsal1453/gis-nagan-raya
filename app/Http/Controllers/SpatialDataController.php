@@ -170,4 +170,19 @@ class SpatialDataController extends Controller
                 ->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
     }
+
+    public function show($id)
+    {
+        try {
+            $spatialData = SpatialData::with(['subdistrict', 'village', 'categories', 'user'])
+            ->findOrFail($id);
+
+            return Inertia::render('SpatialData/Show', [
+                'spatialData' => $spatialData
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->route('spatial-data.index')
+            ->with('error', 'Data spasial tidak ditemukan.');
+        }
+    }
 }
