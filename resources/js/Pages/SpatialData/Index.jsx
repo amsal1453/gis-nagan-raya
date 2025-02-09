@@ -3,7 +3,14 @@ import MainLayout from "@/Layouts/MainLayout";
 import { Head, usePage } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
 import React, { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import {
+    MapContainer,
+    TileLayer,
+    Marker,
+    Popup,
+    Polygon,
+    Polyline,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
 
@@ -25,9 +32,6 @@ export default function Index({
     villages,
     categories,
 }) {
-
-    console.log("Villages:", villages);
-    console.log("Categories:", categories);
     const breadcrumbsPath = [
         {
             label: "Spatial Data",
@@ -37,6 +41,7 @@ export default function Index({
             label: "List",
         },
     ];
+    console.log(spatialData);
 
     // State untuk tracking data yang aktif
     const [activeData, setActiveData] = useState(null);
@@ -128,36 +133,117 @@ export default function Index({
                 <div className="h-[500px] relative">
                     <MapContainer
                         center={[4.1416, 96.5096]}
-                        zoom={10}
+                        zoom={15}
                         className="w-full h-full"
                     >
                         <TileLayer
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                            attribution="&copy; Esri"
                         />
                         <TileLayer
-                            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                            attribution="&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
-                            opacity={0.5}
+                            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                         />
+
                         {spatialData.data?.map((item) => (
-                            <Marker
-                                key={item.id}
-                                position={[item.latitude, item.longitude]}
-                                icon={customIcon}
-                            >
-                                <Popup>
-                                    <div>
-                                        <h3 className="font-bold">
-                                            {item.name_spatial}
-                                        </h3>
-                                        <p>Desa: {item.village?.name}</p>
-                                        <p>
-                                            Kecamatan: {item.subdistrict?.name}
-                                        </p>
-                                    </div>
-                                </Popup>
-                            </Marker>
+                            <React.Fragment key={item.id}>
+                                {/* Render Point */}
+                                {item.location && (
+                                    <Marker
+                                        position={[
+                                            item.location.coordinates[1],
+                                            item.location.coordinates[0],
+                                        ]}
+                                        icon={customIcon}
+                                    >
+                                        <Popup>
+                                            <div>
+                                                <h3 className="font-bold">
+                                                    {item.name_spatial}
+                                                </h3>
+                                                <p>
+                                                    Desa:{" "}
+                                                    {item.village?.name_village}
+                                                </p>
+                                                <p>
+                                                    Kecamatan:{" "}
+                                                    {
+                                                        item.subdistrict
+                                                            ?.name_subdistrict
+                                                    }
+                                                </p>
+                                                <p>
+                                                    Kategori:{" "}
+                                                    {item.categories
+                                                        ?.map(
+                                                            (cat) =>
+                                                                cat.name_category
+                                                        )
+                                                        .join(", ")}
+                                                </p>
+                                            </div>
+                                        </Popup>
+                                    </Marker>
+                                )}
+
+                                {/* Render Polygon */}
+                                {item.area && (
+                                    <Polygon
+                                        positions={item.area.coordinates[0].map(
+                                            (coord) => [coord[1], coord[0]]
+                                        )}
+                                        pathOptions={{ color: "blue" }}
+                                    >
+                                        <Popup>
+                                            <div>
+                                                <h3 className="font-bold">
+                                                    {item.name_spatial}
+                                                </h3>
+                                                <p>
+                                                    Desa:{" "}
+                                                    {item.village?.name_village}
+                                                </p>
+                                                <p>
+                                                    Kecamatan:{" "}
+                                                    {
+                                                        item.subdistrict
+                                                            ?.name_subdistrict
+                                                    }
+                                                </p>
+                                            </div>
+                                        </Popup>
+                                    </Polygon>
+                                )}
+
+                                {/* Render Line */}
+                                {item.line && (
+                                    <Polyline
+                                        positions={item.line.coordinates.map(
+                                            (coord) => [coord[1], coord[0]]
+                                        )}
+                                        pathOptions={{ color: "red" }}
+                                    >
+                                        <Popup>
+                                            <div>
+                                                <h3 className="font-bold">
+                                                    {item.name_spatial}
+                                                </h3>
+                                                <p>
+                                                    Desa:{" "}
+                                                    {item.village?.name_village}
+                                                </p>
+                                                <p>
+                                                    Kecamatan:{" "}
+                                                    {
+                                                        item.subdistrict
+                                                            ?.name_subdistrict
+                                                    }
+                                                </p>
+                                            </div>
+                                        </Popup>
+                                    </Polyline>
+                                )}
+                            </React.Fragment>
                         ))}
                     </MapContainer>
                 </div>
@@ -209,14 +295,16 @@ export default function Index({
                                             {item.name_spatial}
                                         </td>
                                         <td className="px-6 py-4 border-b">
-                                            {item.village?.name}
+                                            {item.village?.name_village}
                                         </td>
                                         <td className="px-6 py-4 border-b">
-                                            {item.subdistrict?.name}
+                                            {item.subdistrict?.name_subdistrict}
                                         </td>
                                         <td className="px-6 py-4 border-b">
                                             {item.categories
-                                                ?.map((cat) => cat.name)
+                                                ?.map(
+                                                    (cat) => cat.name_category
+                                                )
                                                 .join(", ")}
                                         </td>
                                         <td className="px-6 py-4 border-b">

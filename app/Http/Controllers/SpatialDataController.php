@@ -5,11 +5,16 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Village;
 use App\Models\Category;
+use App\Models\Subdistrict;
 use App\Models\SpatialData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use MatanYadaev\EloquentSpatial\Objects\Point;
+use MatanYadaev\EloquentSpatial\Objects\Polygon;
+use MatanYadaev\EloquentSpatial\Objects\LineString;
 
 class SpatialDataController extends Controller
 {
@@ -71,5 +76,98 @@ class SpatialDataController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        return Inertia::render('SpatialData/Create', [
+            'villages' => Village::all(),
+            'categories' => Category::all(),
+            'subdistricts' => Subdistrict::all(),
+        ]);
+    }
+    public function store(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'subdistrict_id' => 'required|exists:subdistricts,id',
+                'village_id' => 'required|exists:villages,id',
+                'name_spatial' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'location' => 'nullable|string',
+                'area' => 'nullable|string',
+                'line' => 'nullable|string',
+                'categories' => 'required|array',
+                'categories.*' => 'exists:categories,id',
+            ]);
 
+            DB::beginTransaction();
+
+            try {
+                $spatialData = new SpatialData();
+                $spatialData->subdistrict_id = $validated['subdistrict_id'];
+                $spatialData->village_id = $validated['village_id'];
+                $spatialData->name_spatial = $validated['name_spatial'];
+                $spatialData->description = $validated['description'];
+                $spatialData->created_by = Auth::id();
+
+                // Handle Area (Polygon)
+                if ($request->area) {
+                    $areaData = json_decode($request->area, true);
+                    if (isset($areaData['coordinates']) && is_array($areaData['coordinates'])) {
+                        $points = [];
+                        foreach ($areaData['coordinates'][0] as $coord) {
+                            $points[] = new Point($coord[1], $coord[0]); // [latitude, longitude]
+                        }
+                        $lineString = new LineString($points);
+                        $spatialData->area = new Polygon([$lineString]);
+                    }
+                }
+
+                // Handle Location (Point)
+                if ($request->location) {
+                    $locationData = json_decode($request->location, true);
+                    if (isset($locationData['coordinates'])) {
+                        $spatialData->location = new Point(
+                            $locationData['coordinates'][1], // latitude
+                            $locationData['coordinates'][0]  // longitude
+                        );
+                    }
+                }
+
+                // Handle Line (LineString)
+                if ($request->line) {
+                    $lineData = json_decode($request->line, true);
+                    if (isset($lineData['coordinates'])) {
+                        $points = [];
+                        foreach ($lineData['coordinates'] as $coord) {
+                            $points[] = new Point($coord[1], $coord[0]); // [latitude, longitude]
+                        }
+                        $spatialData->line = new LineString($points);
+                    }
+                }
+
+                if (!$spatialData->save()) {
+                    throw new \Exception('Failed to save spatial data');
+                }
+
+                // Attach categories
+                if (!empty($validated['categories'])) {
+                    $spatialData->categories()->attach($validated['categories']);
+                }
+
+                DB::commit();
+
+                return redirect()->route('spatial-data.index')
+                ->with('success', 'Data spasial berhasil ditambahkan.');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Inner try-catch error: ' . $e->getMessage());
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            Log::error('Outer try-catch error: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        }
+    }
 }
