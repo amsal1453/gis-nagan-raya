@@ -185,4 +185,139 @@ class SpatialDataController extends Controller
             ->with('error', 'Data spasial tidak ditemukan.');
         }
     }
+
+    public function edit($id)
+    {
+        try {
+            $spatialData = SpatialData::with(['categories'])->findOrFail($id);
+
+            return Inertia::render('SpatialData/Edit', [
+                'spatialData' => $spatialData,
+                'villages' => Village::all(),
+                'categories' => Category::all(),
+                'subdistricts' => Subdistrict::all(),
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->route('spatial-data.index')
+            ->with('error', 'Data spasial tidak ditemukan.');
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'subdistrict_id' => 'required|exists:subdistricts,id',
+                'village_id' => 'required|exists:villages,id',
+                'name_spatial' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'location' => 'nullable|string',
+                'area' => 'nullable|string',
+                'line' => 'nullable|string',
+                'categories' => 'required|array',
+                'categories.*' => 'exists:categories,id',
+            ]);
+
+
+
+            DB::beginTransaction();
+
+            try {
+                $spatialData = SpatialData::findOrFail($id);
+                $spatialData->subdistrict_id = $validated['subdistrict_id'];
+                $spatialData->village_id = $validated['village_id'];
+                $spatialData->name_spatial = $validated['name_spatial'];
+                $spatialData->description = $validated['description'];
+                $spatialData->created_by = Auth::id();
+
+                // Handle Area (Polygon)
+                if ($request->area) {
+                    $areaData = json_decode($request->area, true);
+                    if (isset($areaData['coordinates']) && is_array($areaData['coordinates'])) {
+                        $points = [];
+                        foreach ($areaData['coordinates'][0] as $coord) {
+                            $points[] = new Point($coord[1], $coord[0]);
+                        }
+                        $lineString = new LineString($points);
+                        $spatialData->area = new Polygon([$lineString]);
+                    }
+                } else {
+                    $spatialData->area = null;
+                }
+
+                // Handle Location (Point)
+                if ($request->location) {
+                    $locationData = json_decode($request->location, true);
+                    if (isset($locationData['coordinates'])) {
+                        $spatialData->location = new Point(
+                            $locationData['coordinates'][1],
+                            $locationData['coordinates'][0]
+                        );
+                    }
+                } else {
+                    $spatialData->location = null;
+                }
+
+                // Handle Line (LineString)
+                if ($request->line) {
+                    $lineData = json_decode($request->line, true);
+                    if (isset($lineData['coordinates'])) {
+                        $points = [];
+                        foreach ($lineData['coordinates'] as $coord) {
+                            $points[] = new Point($coord[1], $coord[0]);
+                        }
+                        $spatialData->line = new LineString($points);
+                    }
+                } else {
+                    $spatialData->line = null;
+                }
+
+                if (!$spatialData->save()) {
+                    throw new \Exception('Failed to update spatial data');
+                }
+
+                // Sync categories
+                $spatialData->categories()->sync($validated['categories']);
+
+                DB::commit();
+
+                return redirect()->route('spatial-data.index')
+                ->with('success', 'Data spasial berhasil diperbarui.');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Inner try-catch error: ' . $e->getMessage());
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            Log::error('Outer try-catch error: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $spatialData = SpatialData::findOrFail($id);
+
+        DB::beginTransaction();
+
+        try {
+            // Detach categories
+            $spatialData->categories()->detach();
+
+            // Delete the spatial data
+            $spatialData->delete();
+
+            DB::commit();
+
+            return redirect()->route('spatial-data.index')
+            ->with('success', 'Data spasial berhasil dihapus.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error deleting spatial data: ' . $e->getMessage());
+            return redirect()->back()
+                ->withErrors(['error' => 'Terjadi kesalahan saat menghapus data spasial: ' . $e->getMessage()]);
+        }
+    }
 }
