@@ -93,10 +93,14 @@ useEffect(() => {
                                 type="text"
                                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 value={data.name_village}
-                                onChange={e => setData('name_village', e.target.value)}
+                                onChange={(e) =>
+                                    setData("name_village", e.target.value)
+                                }
                             />
                             {errors.name_village && (
-                                <div className="mt-1 text-sm text-red-500">{errors.name_village}</div>
+                                <div className="mt-1 text-sm text-red-500">
+                                    {errors.name_village}
+                                </div>
                             )}
                         </div>
 
@@ -108,10 +112,14 @@ useEffect(() => {
                                 type="text"
                                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 value={data.code_village}
-                                onChange={e => setData('code_village', e.target.value)}
+                                onChange={(e) =>
+                                    setData("code_village", e.target.value)
+                                }
                             />
                             {errors.code_village && (
-                                <div className="mt-1 text-sm text-red-500">{errors.code_village}</div>
+                                <div className="mt-1 text-sm text-red-500">
+                                    {errors.code_village}
+                                </div>
                             )}
                         </div>
 
@@ -122,17 +130,24 @@ useEffect(() => {
                             <select
                                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 value={data.subdistrict_id}
-                                onChange={e => setData('subdistrict_id', e.target.value)}
+                                onChange={(e) =>
+                                    setData("subdistrict_id", e.target.value)
+                                }
                             >
                                 <option value="">Select Subdistrict</option>
                                 {subdistricts.map((subdistrict) => (
-                                    <option key={subdistrict.id} value={subdistrict.id}>
+                                    <option
+                                        key={subdistrict.id}
+                                        value={subdistrict.id}
+                                    >
                                         {subdistrict.name_subdistrict}
                                     </option>
                                 ))}
                             </select>
                             {errors.subdistrict_id && (
-                                <div className="mt-1 text-sm text-red-500">{errors.subdistrict_id}</div>
+                                <div className="mt-1 text-sm text-red-500">
+                                    {errors.subdistrict_id}
+                                </div>
                             )}
                         </div>
                     </div>
@@ -148,13 +163,12 @@ useEffect(() => {
                                 className="w-full h-full"
                             >
                                 <TileLayer
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                                    attribution="&copy; Esri"
                                 />
                                 <TileLayer
-                                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                                    attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-                                    opacity={0.5}
+                                    url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
+                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                                 />
                                 <FeatureGroup>
                                     <EditControl
@@ -170,18 +184,26 @@ useEffect(() => {
                                             polyline: false,
                                         }}
                                     />
-                                    {village.boundary_village && !drawnLayers && (
-                                        <GeoJSON
-                                            data={typeof village.boundary_village === 'string'
-                                                ? JSON.parse(village.boundary_village)
-                                                : village.boundary_village}
-                                        />
-                                    )}
+                                    {village.boundary_village &&
+                                        !drawnLayers && (
+                                            <GeoJSON
+                                                data={
+                                                    typeof village.boundary_village ===
+                                                    "string"
+                                                        ? JSON.parse(
+                                                              village.boundary_village
+                                                          )
+                                                        : village.boundary_village
+                                                }
+                                            />
+                                        )}
                                 </FeatureGroup>
                             </MapContainer>
                         </div>
                         {errors.boundary_village && (
-                            <div className="mt-1 text-sm text-red-500">{errors.boundary_village}</div>
+                            <div className="mt-1 text-sm text-red-500">
+                                {errors.boundary_village}
+                            </div>
                         )}
                     </div>
 
@@ -191,7 +213,7 @@ useEffect(() => {
                             disabled={processing}
                             className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 disabled:opacity-50"
                         >
-                            {processing ? 'Saving...' : 'Save Changes'}
+                            {processing ? "Saving..." : "Save Changes"}
                         </button>
                         <button
                             type="button"

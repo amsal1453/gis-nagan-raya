@@ -91,10 +91,14 @@ const Edit = ({ subdistrict }) => {
                                 zoom={10}
                                 className="w-full h-full"
                             >
-                                <TileLayer
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                />
+                                   <TileLayer
+                            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                            attribution="&copy; Esri"
+                        />
+                        <TileLayer
+                            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                        />
                                 <FeatureGroup ref={featureGroupRef}>
                                     <EditControl
                                         position="topright"

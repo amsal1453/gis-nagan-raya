@@ -89,42 +89,68 @@ const Create = () => {
             </div>
             <div className="mt-4 bg-white shadow-sm sm:rounded-lg">
                 <div className="p-6 bg-white border-b border-gray-200">
-                    <h2 className="mb-6 text-2xl font-semibold">Create New Subdistrict</h2>
+                    <h2 className="mb-6 text-2xl font-semibold">
+                        Create New Subdistrict
+                    </h2>
                     <form onSubmit={handleSubmit}>
                         {/* Name */}
                         <div className="mb-4">
-                            <label className="block mb-2 text-sm font-bold text-gray-700">Name</label>
+                            <label className="block mb-2 text-sm font-bold text-gray-700">
+                                Name
+                            </label>
                             <input
                                 type="text"
                                 className="w-full px-3 py-2 border rounded shadow focus:outline-none focus:shadow-outline"
                                 value={data.name_subdistrict}
-                                onChange={e => setData('name_subdistrict', e.target.value)}
+                                onChange={(e) =>
+                                    setData("name_subdistrict", e.target.value)
+                                }
                             />
-                            {errors.name_subdistrict && <div className="mt-1 text-xs text-red-500">{errors.name_subdistrict}</div>}
+                            {errors.name_subdistrict && (
+                                <div className="mt-1 text-xs text-red-500">
+                                    {errors.name_subdistrict}
+                                </div>
+                            )}
                         </div>
 
                         {/* Code */}
                         <div className="mb-4">
-                            <label className="block mb-2 text-sm font-bold text-gray-700">Code</label>
+                            <label className="block mb-2 text-sm font-bold text-gray-700">
+                                Code
+                            </label>
                             <input
                                 type="text"
                                 className="w-full px-3 py-2 border rounded shadow focus:outline-none focus:shadow-outline"
                                 value={data.code_subdistrict}
-                                onChange={e => setData('code_subdistrict', e.target.value)}
+                                onChange={(e) =>
+                                    setData("code_subdistrict", e.target.value)
+                                }
                             />
-                            {errors.code_subdistrict && <div className="mt-1 text-xs text-red-500">{errors.code_subdistrict}</div>}
+                            {errors.code_subdistrict && (
+                                <div className="mt-1 text-xs text-red-500">
+                                    {errors.code_subdistrict}
+                                </div>
+                            )}
                         </div>
 
                         {/* Map */}
                         <div className="mb-4">
                             <div className="flex justify-between">
-                                <label className="text-sm font-bold text-gray-700">Boundary</label>
+                                <label className="text-sm font-bold text-gray-700">
+                                    Boundary
+                                </label>
                                 <button
                                     type="button"
                                     className="text-sm text-blue-600 hover:text-blue-800"
-                                    onClick={() => setShowCoordinateInput(!showCoordinateInput)}
+                                    onClick={() =>
+                                        setShowCoordinateInput(
+                                            !showCoordinateInput
+                                        )
+                                    }
                                 >
-                                    {showCoordinateInput ? 'Hide Coordinates Input' : 'Show Coordinates Input'}
+                                    {showCoordinateInput
+                                        ? "Hide Coordinates Input"
+                                        : "Show Coordinates Input"}
                                 </button>
                             </div>
                             {showCoordinateInput && (
@@ -137,10 +163,18 @@ const Create = () => {
                                 />
                             )}
                             <div className="mt-4 border rounded h-96">
-                                <MapContainer center={[4.1416, 96.5096]} zoom={12} className="w-full h-full">
+                                <MapContainer
+                                    center={[4.1416, 96.5096]}
+                                    zoom={12}
+                                    className="w-full h-full"
+                                >
                                     <TileLayer
-                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                        attribution='&copy; OpenStreetMap contributors'
+                                        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                                        attribution="&copy; Esri"
+                                    />
+                                    <TileLayer
+                                        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
+                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                                     />
                                     <FeatureGroup>
                                         <EditControl
@@ -160,7 +194,9 @@ const Create = () => {
                                 </MapContainer>
                             </div>
                             {errors.boundary_subdistrict && (
-                                <div className="mt-1 text-xs text-red-500">{errors.boundary_subdistrict}</div>
+                                <div className="mt-1 text-xs text-red-500">
+                                    {errors.boundary_subdistrict}
+                                </div>
                             )}
                         </div>
 
@@ -178,7 +214,7 @@ const Create = () => {
                                 className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
                                 disabled={processing}
                             >
-                                {processing ? 'Creating...' : 'Create'}
+                                {processing ? "Creating..." : "Create"}
                             </button>
                         </div>
                     </form>
