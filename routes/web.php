@@ -9,15 +9,9 @@ use App\Http\Controllers\SpatialDataController;
 use App\Http\Controllers\SubdistirictController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VillageController;
+use App\Http\Controllers\WelcomeController;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [WelcomeController::class,'index'])->name('home');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
