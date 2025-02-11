@@ -55,7 +55,7 @@ const Index = ({ villages, can }) => {
                 <div className="h-[500px] relative">
                     <MapContainer
                         center={[4.1416, 96.5096]}
-                        zoom={14}
+                        zoom={11}
                         className="w-full h-full"
                     >
                         {" "}

@@ -54,6 +54,8 @@ export default function Index({
         category: filters?.category || "",
     });
 
+    
+
     // Handle perubahan filter
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
@@ -133,7 +135,7 @@ export default function Index({
                 <div className="h-[500px] relative">
                     <MapContainer
                         center={[4.1416, 96.5096]}
-                        zoom={15}
+                        zoom={11}
                         className="w-full h-full"
                     >
                         <TileLayer
