@@ -27,7 +27,9 @@ const HeroSection = () => {
         }
     }, []);
     return (
-        <div className="bg-gradient-to-r from-[#08244d] to-[#0A4D8C] h-[calc(100vh-800px)] min-h-screen flex items-center overflow-x-hidden">
+        <section 
+        id="/home"
+        className="bg-gradient-to-r from-[#08244d] to-[#0A4D8C] h-[calc(100vh-800px)] min-h-screen flex items-center overflow-x-hidden">
             <div className="container mx-auto px-4 md:px-6 lg:px-8 w-full overflow-hidden">
                 <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
                     <div className="text-white text-center md:text-left px-4 md:px-0">
@@ -63,7 +65,7 @@ const HeroSection = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     );
 };
 

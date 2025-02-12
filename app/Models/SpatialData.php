@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use MatanYadaev\EloquentSpatial\Objects\LineString;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
+use Illuminate\Support\Facades\Cache;
 
 class SpatialData extends Model
 {
@@ -67,5 +68,21 @@ class SpatialData extends Model
     public static function createLineString(array $coordinates)
     {
         return new LineString($coordinates);
+    }
+
+    // Di model SpatialData
+    protected static function booted()
+    {
+        static::created(function () {
+            Cache::forget('spatial_data');
+        });
+
+        static::updated(function () {
+            Cache::forget('spatial_data');
+        });
+
+        static::deleted(function () {
+            Cache::forget('spatial_data');
+        });
     }
 }
