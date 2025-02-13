@@ -61,7 +61,7 @@ const Contact = () => {
             className="min-h-screen"
             style={{ backgroundColor: "#08244d" }}
         >
-            <div className="container mx-auto px-4 py-12">
+            <div className="container mx-auto px-4 py-12 ">
                 {/* Header Section */}
                 <motion.div
                     variants={childVariants}

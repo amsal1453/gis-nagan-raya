@@ -13,16 +13,14 @@ const HeroSection = () => {
             controls.autoRotate = true;
             controls.autoRotateSpeed = 1.0;
 
-            // Fungsi animasi
             const animate = () => {
                 controls.update();
                 requestAnimationFrame(animate);
             };
 
             animate();
-            setIsGlobeReady(true); // Set globe ready
+            setIsGlobeReady(true);
 
-            // Cleanup function
             return () => {
                 controls.autoRotate = false;
                 controls.dispose();
@@ -30,22 +28,49 @@ const HeroSection = () => {
         }
     }, []);
 
-    const fadeIn = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1 },
+    const containerVariants = {
+        hidden: {
+            opacity: 0,
+            x: -100,
+        },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: {
+                duration: 1,
+                ease: "easeOut",
+            },
+        },
+    };
+
+    const globeVariants = {
+        hidden: {
+            opacity: 0,
+            x: 100,
+        },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: {
+                duration: 0.8,
+                ease: "easeOut",
+            },
+        },
     };
 
     return (
-        <motion.section
-            initial="hidden"
-            animate={isGlobeReady ? "visible" : "hidden"}
-            variants={fadeIn}
+        <div
             id="/home"
-            className="bg-gradient-to-r from-[#08244d] to-[#0A4D8C] min-h-screen flex items-center overflow-x-hidden pt-16 md:pt-0"
+            className="bg-gradient-to-r from-[#08244d] to-[#0A4D8C] min-h-screen flex items-center overflow-x-hidden pt-16 md:pt-0 "
         >
             <div className="container mx-auto px-4 md:px-6 lg:px-8 w-full overflow-hidden">
                 <div className="grid md:grid-cols-2 gap-6 md:gap-6 items-center flex-col-reverse md:flex-row">
-                    <div className="text-white text-center md:text-left px-4 md:px-0 mt-4 md:mt-0">
+                    <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="text-white text-center md:text-left px-4 md:px-0 mt-4 md:mt-0"
+                    >
                         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-6 leading-tight">
                             Selamat Datang di Sistem Informasi Geografis
                         </h1>
@@ -59,8 +84,13 @@ const HeroSection = () => {
                         >
                             Mulai Jelajahi
                         </Link>
-                    </div>
-                    <div className="md:mt-0 h-[400px] md:h-[500px] flex justify-center w-full overflow-hidden">
+                    </motion.div>
+                    <motion.div
+                        variants={globeVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="md:mt-0 h-[400px] md:h-[500px] flex justify-center w-full overflow-hidden"
+                    >
                         <Globe
                             ref={globeRef}
                             globeImageUrl="//unpkg.com/three-globe/example/img/earth-day.jpg"
@@ -75,10 +105,10 @@ const HeroSection = () => {
                             autoRotate={true}
                             autoRotateSpeed={0.5}
                         />
-                    </div>
+                    </motion.div>
                 </div>
             </div>
-        </motion.section>
+        </div>
     );
 };
 
