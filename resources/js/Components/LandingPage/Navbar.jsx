@@ -30,7 +30,7 @@ export default function Navbar({ auth }) {
 
     return (
         <>
-            <div className="h-[72px]"></div>
+            <div className="h-16"></div>
 
             <nav
                 className={`fixed w-full top-0 transition-all duration-300 z-[1000] ${
@@ -49,14 +49,14 @@ export default function Navbar({ auth }) {
                             <img
                                 src="/lambang.png"
                                 alt="Logo"
-                                className="h-8 sm:h-10 mr-2"
+                                className="h-5 sm:h-7 mr-1"
                             />
                             <span
                                 className={`${
                                     isScrolled
                                         ? "text-white drop-shadow-md"
                                         : "text-white/90"
-                                } sm:text-2xl text-md font-bold tracking-tight`}
+                                } text-xs sm:text-base md:text-xl font-bold tracking-tight`}
                             >
                                 Sistem Informasi Geografis
                             </span>

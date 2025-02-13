@@ -1,30 +1,101 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 const Contact = () => {
+    // Main container animation variants
+    const containerVariants = {
+        hidden: {
+            opacity: 0,
+            y: 20,
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.6,
+                ease: "easeOut",
+                when: "beforeChildren",
+                staggerChildren: 0.2,
+            },
+        },
+    };
+
+    // Child elements animation variants
+    const childVariants = {
+        hidden: {
+            opacity: 0,
+            y: 20,
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.5,
+                ease: "easeOut",
+            },
+        },
+    };
+
+    // Card hover animation variants
+    const cardVariants = {
+        initial: {
+            scale: 1,
+            y: 0,
+        },
+        hover: {
+            scale: 1.05,
+            y: -5,
+            transition: {
+                duration: 0.3,
+                ease: "easeInOut",
+            },
+        },
+    };
+
     return (
-        <div
+        <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
             id="contact"
             className="min-h-screen"
             style={{ backgroundColor: "#08244d" }}
         >
             <div className="container mx-auto px-4 py-12">
                 {/* Header Section */}
-                <div className="text-center mb-12">
+                <motion.div
+                    variants={childVariants}
+                    className="text-center mb-12"
+                >
                     <h1 className="text-4xl font-bold text-white mb-4">
                         Hubungi Kami
                     </h1>
-                    <div className="w-20 h-1 bg-white/80 mx-auto mb-8"></div>
+                    <motion.div
+                        className="w-20 h-1 bg-white/80 mx-auto mb-8"
+                        initial={{ width: 0 }}
+                        animate={{ width: 80 }}
+                        transition={{ duration: 0.8, delay: 0.5 }}
+                    />
                     <p className="text-gray-300 max-w-2xl mx-auto text-lg">
                         Kami siap membantu Anda. Silakan hubungi kami melalui
                         salah satu kontak di bawah ini.
                     </p>
-                </div>
+                </motion.div>
 
-                {/* Contact Information */}
-                <div className="grid md:grid-cols-3 gap-8 mb-16">
-                    <div className="bg-white p-6 rounded-lg shadow-lg text-center transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-1">
+                {/* Contact Information Cards */}
+                <motion.div
+                    variants={childVariants}
+                    className="grid md:grid-cols-3 gap-8 mb-16"
+                >
+                    {/* Phone Card */}
+                    <motion.div
+                        variants={cardVariants}
+                        initial="initial"
+                        whileHover="hover"
+                        className="bg-white p-6 rounded-lg shadow-lg text-center"
+                    >
                         <div
-                            className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 transition-colors duration-300"
+                            className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
                             style={{ backgroundColor: "rgba(8, 36, 77, 0.1)" }}
                         >
                             <svg
@@ -49,9 +120,15 @@ const Contact = () => {
                             Telepon
                         </h3>
                         <p style={{ color: "#08244d" }}>+62 123 456 789</p>
-                    </div>
+                    </motion.div>
 
-                    <div className="bg-white p-6 rounded-lg shadow-lg text-center transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-1">
+                    {/* Email Card */}
+                    <motion.div
+                        variants={cardVariants}
+                        initial="initial"
+                        whileHover="hover"
+                        className="bg-white p-6 rounded-lg shadow-lg text-center"
+                    >
                         <div
                             className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
                             style={{ backgroundColor: "rgba(8, 36, 77, 0.1)" }}
@@ -78,9 +155,15 @@ const Contact = () => {
                             Email
                         </h3>
                         <p style={{ color: "#08244d" }}>info@sigexample.com</p>
-                    </div>
+                    </motion.div>
 
-                    <div className="bg-white p-6 rounded-lg shadow-lg text-center transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-1">
+                    {/* Address Card */}
+                    <motion.div
+                        variants={cardVariants}
+                        initial="initial"
+                        whileHover="hover"
+                        className="bg-white p-6 rounded-lg shadow-lg text-center"
+                    >
                         <div
                             className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
                             style={{ backgroundColor: "rgba(8, 36, 77, 0.1)" }}
@@ -115,12 +198,20 @@ const Contact = () => {
                         <p style={{ color: "#08244d" }}>
                             Jl. Contoh No. 123, Jakarta
                         </p>
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
 
                 {/* Contact Form */}
-                <div className="max-w-2xl mx-auto">
-                    <div className="bg-white p-8 rounded-lg shadow-lg">
+                <motion.div
+                    variants={childVariants}
+                    className="max-w-2xl mx-auto"
+                >
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                        className="bg-white p-8 rounded-lg shadow-lg"
+                    >
                         <h2
                             className="text-2xl font-semibold mb-6"
                             style={{ color: "#08244d" }}
@@ -128,7 +219,11 @@ const Contact = () => {
                             Kirim Pesan
                         </h2>
                         <form className="space-y-6">
-                            <div>
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: 0.6 }}
+                            >
                                 <label
                                     htmlFor="name"
                                     className="block text-sm font-medium mb-1"
@@ -139,16 +234,20 @@ const Contact = () => {
                                 <input
                                     type="text"
                                     id="name"
-                                    className="w-full px-4 py-2 border rounded-md focus:ring-2"
+                                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
                                     style={{
                                         borderColor: "rgba(8, 36, 77, 0.2)",
                                         color: "#08244d",
                                     }}
                                     placeholder="Masukkan nama lengkap"
                                 />
-                            </div>
+                            </motion.div>
 
-                            <div>
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: 0.7 }}
+                            >
                                 <label
                                     htmlFor="email"
                                     className="block text-sm font-medium mb-1"
@@ -159,16 +258,20 @@ const Contact = () => {
                                 <input
                                     type="email"
                                     id="email"
-                                    className="w-full px-4 py-2 border rounded-md focus:ring-2"
+                                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
                                     style={{
                                         borderColor: "rgba(8, 36, 77, 0.2)",
                                         color: "#08244d",
                                     }}
                                     placeholder="Masukkan email"
                                 />
-                            </div>
+                            </motion.div>
 
-                            <div>
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: 0.8 }}
+                            >
                                 <label
                                     htmlFor="message"
                                     className="block text-sm font-medium mb-1"
@@ -179,30 +282,32 @@ const Contact = () => {
                                 <textarea
                                     id="message"
                                     rows={4}
-                                    className="w-full px-4 py-2 border rounded-md focus:ring-2"
+                                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
                                     style={{
                                         borderColor: "rgba(8, 36, 77, 0.2)",
                                         color: "#08244d",
                                     }}
                                     placeholder="Tulis pesan Anda"
                                 ></textarea>
-                            </div>
+                            </motion.div>
 
-                            <button
+                            <motion.button
                                 type="submit"
                                 className="w-full py-2 px-4 rounded-md hover:opacity-90 transition-opacity duration-300"
                                 style={{
                                     backgroundColor: "#08244d",
                                     color: "white",
                                 }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                             >
                                 Kirim Pesan
-                            </button>
+                            </motion.button>
                         </form>
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

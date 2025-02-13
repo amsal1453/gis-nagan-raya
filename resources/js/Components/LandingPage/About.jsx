@@ -1,8 +1,17 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 const About = () => {
+    const fadeIn = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 },
+    };
+
     return (
-        <section
+        <motion.section
+            initial="hidden"
+            animate="visible"
+            variants={fadeIn}
             id="about"
             className="min-h-screen bg-gradient-to-r from-[#08244d] to-[#0A4D8C]"
         >
@@ -105,7 +114,7 @@ const About = () => {
                     </div>
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 };
 

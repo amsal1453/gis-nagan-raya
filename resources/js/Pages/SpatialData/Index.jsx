@@ -13,6 +13,7 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
+import Pagination from "@/Components/Pagination";
 
 // Definisikan custom icon
 const customIcon = new Icon({
@@ -366,6 +367,11 @@ export default function Index({
                                 ))}
                             </tbody>
                         </table>
+
+                        <Pagination
+                            links={spatialData.links}
+                            className="mt-4 justify-center"
+                        />
                     </div>
                 </div>
             </div>

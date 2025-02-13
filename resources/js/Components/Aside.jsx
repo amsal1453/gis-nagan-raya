@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import React from 'react';
 import { LIST_ASIDE } from '@/Constants/ListAside';
+import { IoLogOutSharp } from 'react-icons/io5';
 
 const Aside = () => {
     const { auth } = usePage().props;
@@ -12,11 +13,11 @@ const Aside = () => {
     });
 
     return (
-        <aside className='fixed top-0 left-0  h-screen bg-primary overflow-y-auto mt-16'>
-            <div className='absolute left-0 flex items-center justify-center w-full h-16 text-center top-5 bg-primary'>
-                <h1 className='text-2xl font-bold text-black bg-[#ffff] w-full'>MAIN NAVIGATION</h1>
+        <aside className='fixed top-0 left-0  h-screen bg-primary overflow-y-auto mt-16   w-full'>
+            <div className='mt-10   bg-[#ffff]' > 
+                <h1 className='text-xl font-semibold text-black pl-8 '>MAIN NAVIGATION</h1>
             </div>
-            <div className='flex flex-col items-center w-full mt-20'>
+            <div className='flex flex-col items-center w-full mt-5'>
                 <ul className="w-full">
                     {filteredMenu.map((item, index) => (
                         <li key={index} className="w-full mb-4 text-lg font-bold text-white">
@@ -27,7 +28,7 @@ const Aside = () => {
                                     as="button"
                                     className="flex items-center w-full px-4 py-2 transition duration-200 hover:bg-[#ffff] hover:text-black hover:rounded"
                                 >
-                                    {item.title}
+                                   <IoLogOutSharp size={20} className='mr-2'/> {item.title}
                                 </Link>
                             ) : (
                                 <Link
