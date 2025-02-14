@@ -35,7 +35,7 @@ export default function Navbar({ auth }) {
             <nav
                 className={`fixed w-full top-0 transition-all duration-300 z-[1000] ${
                     isScrolled
-                        ? "bg-primary/95 backdrop-blur-sm shadow-lg mx-4 mt-2 rounded-2xl border border-white/10"
+                        ? "bg-gradient-to-b from-primary via-primary to-primary/95 shadow-xl mx-4 mt-2 rounded-2xl border border-white/20"
                         : "bg-primary"
                 }`}
             >
@@ -54,16 +54,16 @@ export default function Navbar({ auth }) {
                             <span
                                 className={`${
                                     isScrolled
-                                        ? "text-white drop-shadow-md"
+                                        ? "text-white font-bold drop-shadow-[0_2px_2px_rgba(0,0,0,0.3)]"
                                         : "text-white/90"
-                                } text-xs sm:text-base md:text-xl font-bold tracking-tight`}
+                                } text-xs sm:text-base md:text-xl tracking-tight`}
                             >
                                 Sistem Informasi Geografis
                             </span>
                         </div>
                         <div className="block lg:hidden">
                             <button
-                                className="text-white focus:outline-none"
+                                className="text-white focus:outline-none hover:bg-white/10 p-2 rounded-lg transition-colors"
                                 id="menu-toggle"
                             >
                                 <svg
@@ -86,7 +86,7 @@ export default function Navbar({ auth }) {
                                 href="/#home"
                                 className={`${
                                     isScrolled
-                                        ? "text-white hover:bg-white/10 rounded-lg font-medium"
+                                        ? "text-white hover:bg-white/15 rounded-lg font-medium drop-shadow-sm"
                                         : "text-white/90 hover:bg-blue-600 rounded-lg"
                                 } px-3 py-2 transition-all`}
                             >
@@ -96,7 +96,7 @@ export default function Navbar({ auth }) {
                                 href="#spatial-data"
                                 className={`${
                                     isScrolled
-                                        ? "text-white hover:bg-white/10 rounded-lg font-medium"
+                                        ? "text-white hover:bg-white/15 rounded-lg font-medium drop-shadow-sm"
                                         : "text-white/90 hover:bg-blue-600 rounded-lg"
                                 } px-3 py-2 transition-all`}
                             >
@@ -106,7 +106,7 @@ export default function Navbar({ auth }) {
                                 href="/#about"
                                 className={`${
                                     isScrolled
-                                        ? "text-white hover:bg-white/10 rounded-lg font-medium"
+                                        ? "text-white hover:bg-white/15 rounded-lg font-medium drop-shadow-sm"
                                         : "text-white/90 hover:bg-blue-600 rounded-lg"
                                 } px-3 py-2 transition-all`}
                             >
@@ -116,7 +116,7 @@ export default function Navbar({ auth }) {
                                 href="/#contact"
                                 className={`${
                                     isScrolled
-                                        ? "text-white hover:bg-white/10 rounded-lg font-medium"
+                                        ? "text-white hover:bg-white/15 rounded-lg font-medium drop-shadow-sm"
                                         : "text-white/90 hover:bg-blue-600 rounded-lg"
                                 } px-3 py-2 transition-all`}
                             >
@@ -127,7 +127,7 @@ export default function Navbar({ auth }) {
                                     href="/login"
                                     className={`${
                                         isScrolled
-                                            ? "bg-blue-600 hover:bg-blue-700 text-white"
+                                            ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md"
                                             : "bg-blue-500 hover:bg-blue-600 text-white"
                                     } px-4 py-2 rounded-lg transition-all`}
                                 >
@@ -137,8 +137,8 @@ export default function Navbar({ auth }) {
                                 <span
                                     className={`${
                                         isScrolled
-                                            ? "bg-blue-600 hover:bg-blue-700 text-white"
-                                            : "bg-blue-500 hover:bg-blue-600"
+                                            ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+                                            : "bg-blue-500 hover:bg-blue-600 text-white"
                                     } px-4 py-2 rounded-lg transition-all`}
                                 >
                                     <Link href="/dashboard">Dashboard</Link>
@@ -147,9 +147,9 @@ export default function Navbar({ auth }) {
                         </div>
                     </div>
                     <div
-                        className={`lg:hidden absolute w-[calc(100%-2rem)] left-4 top-full ${
+                        className={`lg:hidden absolute w-[calc(100%-2rem)] left-4 top-full hidden ${
                             isScrolled
-                                ? "bg-primary/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/10 mt-2"
+                                ? "bg-gradient-to-b from-primary to-primary/95 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 mt-2"
                                 : "bg-primary"
                         }`}
                         id="menu"
@@ -157,39 +157,39 @@ export default function Navbar({ auth }) {
                         <div className="container mx-auto px-4 py-2">
                             <a
                                 href="/#home"
-                                className="block text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all"
+                                className="block text-white hover:bg-white/15 px-3 py-2 rounded-lg transition-all font-medium"
                             >
                                 Home
                             </a>
                             <a
                                 href="#spatial-data"
-                                className="block text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all"
+                                className="block text-white hover:bg-white/15 px-3 py-2 rounded-lg transition-all font-medium"
                             >
                                 Spatial Data
                             </a>
                             <a
                                 href="/#about"
-                                className="block text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all"
+                                className="block text-white hover:bg-white/15 px-3 py-2 rounded-lg transition-all font-medium"
                             >
                                 About
                             </a>
                             <a
                                 href="/#contact"
-                                className="block text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all"
+                                className="block text-white hover:bg-white/15 px-3 py-2 rounded-lg transition-all font-medium"
                             >
                                 Contact
                             </a>
                             {!auth.user ? (
                                 <Link
                                     href="/login"
-                                    className="block text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all"
+                                    className="block text-white hover:bg-white/15 px-3 py-2 rounded-lg transition-all font-medium"
                                 >
                                     Login
                                 </Link>
                             ) : (
                                 <Link
                                     href="/dashboard"
-                                    className="block text-white hover:bg-white/10 px-3 py-2 rounded-lg transition-all"
+                                    className="block text-white hover:bg-white/15 px-3 py-2 rounded-lg transition-all font-medium"
                                 >
                                     Dashboard
                                 </Link>
