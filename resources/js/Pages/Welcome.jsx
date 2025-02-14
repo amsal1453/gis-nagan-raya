@@ -7,6 +7,8 @@ import Contact from "@/Components/LandingPage/Contact";
 import Footer from "@/Components/LandingPage/Footer";
 
 export default function Welcome({ auth, spatialData, villages, categories }) {
+
+    
     return (
         <div>
             <Head title="Sistem Informasi Geografis" />

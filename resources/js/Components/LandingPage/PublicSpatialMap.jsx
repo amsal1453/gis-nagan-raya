@@ -6,6 +6,7 @@ import {
     Popup,
     Polygon,
     Polyline,
+    GeoJSON,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { divIcon } from "leaflet";
@@ -25,13 +26,13 @@ const VILLAGE_COLORS = {
 };
 
 // SVG marker creation function remains the same
-const createSVGMarker = (color) => {
+const createSVGMarker = () => {
     const svgString = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="24">
-            <path d="M12 0C7.58 0 4 3.58 4 8c0 5.25 8 13 8 13s8-7.75 8-13c0-4.42-3.58-8-8-8z" 
-                fill="${color}" 
-                stroke="white" 
-                stroke-width="1"
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="24" height="32">
+            <path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"
+            fill="#FF0000"
+            stroke="#FFFFFF"
+            stroke-width="20"
             />
         </svg>
     `;
@@ -39,9 +40,9 @@ const createSVGMarker = (color) => {
     return divIcon({
         html: svgString,
         className: "",
-        iconSize: [24, 24],
-        iconAnchor: [12, 24],
-        popupAnchor: [0, -24],
+        iconSize: [24, 32],
+        iconAnchor: [12, 32],
+        popupAnchor: [0, -32],
     });
 };
 
@@ -56,6 +57,7 @@ export default function PublicSpatialMap({
     villages,
     categories,
 }) {
+    console.log(villages);
     const [filterValues, setFilterValues] = useState({
         search: "",
         village_id: "",
@@ -212,13 +214,49 @@ export default function PublicSpatialMap({
                                 url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                             />
+                            
+
+                            {/* Render Village Boundaries */}
+                            {villages?.map((village) => {
+                                if (village.boundary_village) {
+                                    const villageColor = getColorByVillageId(
+                                        village.id
+                                    );
+                                    const geoJsonData =
+                                        typeof village.boundary_village ===
+                                        "string"
+                                            ? JSON.parse(
+                                                  village.boundary_village
+                                              )
+                                            : village.boundary_village;
+
+                                    return (
+                                        <GeoJSON
+                                            key={village.id}
+                                            data={geoJsonData}
+                                            style={{
+                                                fillColor: villageColor,
+                                                weight: 0,
+                                                opacity: 1,
+                                                color: villageColor,
+                                                fillOpacity: 0.4,
+                                            }}
+                                            onEachFeature={(feature, layer) => {
+                                                layer.bindPopup(
+                                                    village.name_village
+                                                );
+                                            }}
+                                        />
+                                    );
+                                }
+                                return null;
+                            })}
 
                             {filteredData.map((item) => {
                                 const villageColor = getColorByVillageId(
                                     item.village?.id
                                 );
-                                const markerIcon =
-                                    createSVGMarker(villageColor);
+                                const markerIcon = createSVGMarker();
 
                                 return (
                                     <React.Fragment key={item.id}>

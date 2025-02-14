@@ -67,7 +67,7 @@ const Aside = () => {
                 <div className="flex flex-col items-center w-full mt-5">
                     <ul className="w-full">
                         {filteredMenu.map((item, index) => (
-                            <li key={index} className="w-full mb-4 text-lg font-bold text-white">
+                            <li key={index} className="w-full mb-4 text-base font-bold text-white">
                                 {item.title === 'Logout' ? (
                                     <Link
                                         href={route('logout')}

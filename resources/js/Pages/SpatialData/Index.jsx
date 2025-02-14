@@ -1,6 +1,6 @@
 import Breadcrumbs from "@/Components/Breadcrumbs";
 import MainLayout from "@/Layouts/MainLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, usePage, router } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
 import React, { useState } from "react";
 import {
@@ -251,9 +251,7 @@ export default function Index({
                             {can.create && (
                                 <button
                                     onClick={() =>
-                                        Inertia.get(
-                                            route("spatial-data.create")
-                                        )
+                                        router.get("/spatial-data/create")
                                     }
                                     className="w-full px-4 py-2 text-white bg-blue-500 rounded sm:w-auto hover:bg-blue-600"
                                 >

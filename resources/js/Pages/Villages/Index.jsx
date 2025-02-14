@@ -1,10 +1,9 @@
 import Breadcrumbs from "@/Components/Breadcrumbs";
 import MainLayout from "@/Layouts/MainLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, usePage, router } from "@inertiajs/react";
 import React, { useState } from "react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { Inertia } from "@inertiajs/inertia";
 
 const Index = ({ villages, can }) => {
     const BreadcrumbsPath = [
@@ -106,7 +105,7 @@ const Index = ({ villages, can }) => {
                         {can.create && (
                             <button
                                 onClick={() =>
-                                    Inertia.get(route("village.create"))
+                                    router.get(route("village.create"))
                                 }
                                 className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 text-sm md:text-base w-full md:w-auto"
                             >
@@ -163,7 +162,7 @@ const Index = ({ villages, can }) => {
                                                 {can.edit && (
                                                     <button
                                                         onClick={() =>
-                                                            Inertia.get(
+                                                            router.get(
                                                                 route(
                                                                     "village.edit",
                                                                     village.id
@@ -183,7 +182,7 @@ const Index = ({ villages, can }) => {
                                                                     "Apakah Anda yakin ingin menghapus desa ini?"
                                                                 )
                                                             ) {
-                                                                Inertia.delete(
+                                                                router.delete(
                                                                     route(
                                                                         "village.destroy",
                                                                         village.id
@@ -198,7 +197,7 @@ const Index = ({ villages, can }) => {
                                                 )}
                                                 <button
                                                     onClick={() =>
-                                                        Inertia.get(
+                                                        router.get(
                                                             route(
                                                                 "village.show",
                                                                 village.id
@@ -215,9 +214,11 @@ const Index = ({ villages, can }) => {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                    </div>;
 
-                    {/* Mobile View */}
+                    {
+                        /* Mobile View */
+                    }
                     <div className="md:hidden space-y-4">
                         {villages.map((village) => (
                             <div
@@ -259,7 +260,7 @@ const Index = ({ villages, can }) => {
                                             {can.edit && (
                                                 <button
                                                     onClick={() =>
-                                                        Inertia.get(
+                                                        router.get(
                                                             route(
                                                                 "village.edit",
                                                                 village.id
@@ -279,7 +280,7 @@ const Index = ({ villages, can }) => {
                                                                 "Apakah Anda yakin ingin menghapus desa ini?"
                                                             )
                                                         ) {
-                                                            Inertia.delete(
+                                                            router.delete(
                                                                 route(
                                                                     "village.destroy",
                                                                     village.id
@@ -294,7 +295,7 @@ const Index = ({ villages, can }) => {
                                             )}
                                             <button
                                                 onClick={() =>
-                                                    Inertia.get(
+                                                    router.get(
                                                         route(
                                                             "village.show",
                                                             village.id
@@ -310,7 +311,7 @@ const Index = ({ villages, can }) => {
                                 </div>
                             </div>
                         ))}
-                    </div>
+                    </div>;
                 </div>
             </div>
         </MainLayout>
