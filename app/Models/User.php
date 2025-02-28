@@ -24,7 +24,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'village_id'
+        'village_id',
+        'profile_photo'
     ];
 
     /**
@@ -58,5 +59,14 @@ class User extends Authenticatable
     public function village(): BelongsTo
     {
         return $this->belongsTo(Village::class);
+    }
+
+    public function getProfilePhotoUrlAttribute()
+    {
+        if ($this->profile_photo) {
+            return asset('storage/' . $this->profile_photo);
+        }
+        
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
     }
 }

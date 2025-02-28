@@ -10,7 +10,7 @@ export default function Welcome({ auth, spatialData, villages, categories }) {
 
     
     return (
-        <div>
+        <div className="overflow-x-hidden">
             <Head title="Sistem Informasi Geografis" />
             <Navbar auth={auth} />
             <main>

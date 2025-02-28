@@ -1,10 +1,10 @@
 import MainLayout from "@/Layouts/MainLayout";
 import React from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import Breadcrumbs from "@/Components/Breadcrumbs";
-import { Inertia } from "@inertiajs/inertia";
+
 
 const Index = ({ subdistricts }) => {
     const BreadcrumbsPath = [
@@ -14,7 +14,7 @@ const Index = ({ subdistricts }) => {
 
     const handleDelete = (id) => {
         if (confirm("apakah kamu yakin menghapus data ini")) {
-            Inertia.delete(`/subdistricts/${id}`, {
+            router.delete(`/subdistricts/${id}`, {
                 onSuccess: () => {
                     alert("Data berhasil di hapus");
                 },

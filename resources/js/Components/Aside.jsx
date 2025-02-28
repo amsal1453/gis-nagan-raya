@@ -1,4 +1,4 @@
-import { Link, usePage } from '@inertiajs/react';
+import { Link, usePage, router } from '@inertiajs/react';
 import React, { useState, useEffect } from 'react';
 import { LIST_ASIDE } from '@/Constants/ListAside';
 import { IoLogOutSharp } from 'react-icons/io5';
@@ -25,13 +25,44 @@ const Aside = () => {
         return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
 
-    const filteredMenu = LIST_ASIDE.filter(item => {
+    // Separate regular menu items and logout
+    const regularMenuItems = LIST_ASIDE.filter(item => {
         const hasPermission = item.permission.includes(userRole);
         return hasPermission;
     });
 
+    // Create complete menu with logout
+    const completeMenu = [
+        ...regularMenuItems,
+        {
+            title: 'Logout',
+            route: 'logout',
+            icon: IoLogOutSharp,
+            permission: ['*'] // Wildcard permission - accessible to all
+        }
+    ];
+
     const toggleMenu = () => {
         setIsOpen(!isOpen);
+    };
+
+    const handleProfilePhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('photo', file);
+
+            router.post(route('profile.photo.update'), formData, {
+                forceFormData: true,
+                preserveScroll: true,
+                onSuccess: () => {
+                    alert('Profile photo updated successfully');
+                },
+                onError: () => {
+                    alert('Failed to update profile photo');
+                }
+            });
+        }
     };
 
     return (
@@ -59,37 +90,62 @@ const Aside = () => {
                     w-72 lg:w-1/5 
                     ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
             >
-                <div className="mt-10 bg-white">
+                {/* Profile Section */}
+                <div className="flex flex-col items-center pt-4 pb-4">
+                    <div className="relative group">
+                        <img 
+                            src={auth.user.profile_photo_url} 
+                            alt="Profile" 
+                            className="w-24 h-24 rounded-full object-cover border-4 border-white"
+                        />
+                        <label htmlFor="profile-photo" className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                            <span className="text-white text-sm">Change Photo</span>
+                        </label>
+                        <input 
+                            type="file" 
+                            id="profile-photo" 
+                            className="hidden" 
+                            accept="image/*"
+                            onChange={(e) => handleProfilePhotoChange(e)}
+                        />
+                    </div>
+                    <h2 className="mt-4 text-white font-semibold">{auth.user.name}</h2>
+                    <p className="text-gray-300 text-sm">{auth.user.email}</p>
+                </div>
+
+                <div className="mt-4 bg-white">
                     <h1 className="text-xl font-semibold text-black pl-8">
                         MAIN NAVIGATION
                     </h1>
                 </div>
-                <div className="flex flex-col items-center w-full mt-5">
-                    <ul className="w-full">
-                        {filteredMenu.map((item, index) => (
-                            <li key={index} className="w-full mb-4 text-base font-bold text-white">
-                                {item.title === 'Logout' ? (
-                                    <Link
-                                        href={route('logout')}
-                                        method="post"
-                                        as="button"
-                                        className="flex items-center w-full px-4 py-2 transition duration-200 hover:bg-white hover:text-black hover:rounded"
-                                        onClick={() => isMobile && toggleMenu()}
-                                    >
-                                        <IoLogOutSharp size={20} className="mr-2" /> {item.title}
-                                    </Link>
-                                ) : (
-                                    <Link
-                                        href={route(item.route)}
-                                        className="flex items-center px-4 py-2 transition duration-200 hover:bg-white hover:text-black hover:rounded"
-                                        onClick={() => isMobile && toggleMenu()}
-                                    >
-                                        <item.icon size={20} className="mr-2" /> {item.title}
-                                    </Link>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
+                <div className="flex-1 overflow-y-auto">
+                    <div className="flex flex-col items-center w-full mt-5">
+                        <ul className="w-full">
+                            {completeMenu.map((item, index) => (
+                                <li key={index} className="w-full mb-4 text-[15px] font-bold text-white">
+                                    {item.title === 'Logout' ? (
+                                        <Link
+                                            href={route('logout')}
+                                            method="post"
+                                            as="button"
+                                            className="flex items-center w-full px-4 py-2 transition duration-200 hover:bg-white hover:text-black hover:rounded"
+                                            onClick={() => isMobile && toggleMenu()}
+                                        >
+                                            <item.icon size={19} className="mr-2" /> {item.title}
+                                        </Link>
+                                    ) : (
+                                        <Link
+                                            href={route(item.route)}
+                                            className="flex items-center px-4 py-2 transition duration-200 hover:bg-white hover:text-black hover:rounded"
+                                            onClick={() => isMobile && toggleMenu()}
+                                        >
+                                            <item.icon size={20} className="mr-2" /> {item.title}
+                                        </Link>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             </aside>
         </>

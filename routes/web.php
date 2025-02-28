@@ -40,6 +40,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('/spatial-data', SpatialDataController::class);
 
     });
+
+    Route::post('/profile/photo', [ProfileController::class, 'updateProfilePhoto'])
+        ->name('profile.photo.update')
+        ->middleware(['auth']);
 });
 
 
