@@ -6,7 +6,7 @@ import About from "@/Components/LandingPage/About";
 import Contact from "@/Components/LandingPage/Contact";
 import Footer from "@/Components/LandingPage/Footer";
 
-export default function Welcome({ auth, spatialData, villages, categories }) {
+export default function Welcome({ auth, spatialData, villages, categories, subdistricts }) {
 
     
     return (
@@ -22,6 +22,7 @@ export default function Welcome({ auth, spatialData, villages, categories }) {
                     <PublicSpatialMap
                         spatialData={spatialData}
                         villages={villages}
+                        subdistricts={subdistricts}
                         categories={categories}
                         className="mt-8"
                     />

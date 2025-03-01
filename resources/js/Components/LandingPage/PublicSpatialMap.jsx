@@ -55,9 +55,10 @@ const getColorByVillageId = (villageId) => {
 export default function PublicSpatialMap({
     spatialData,
     villages,
+    subdistricts,
     categories,
 }) {
-    console.log(villages);
+    console.log('subdistricts', subdistricts);
     const [filterValues, setFilterValues] = useState({
         search: "",
         village_id: "",
@@ -156,7 +157,7 @@ export default function PublicSpatialMap({
             <div className="container mx-auto px-4 max-w-7xl">
                 {/* Filter Panel */}
                 <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 mb-6">
-                    <h2 className="text-xl md:text-2xl font-bold mb-4">
+                    <h2 className="text-xl md:text-2xl font-bold mb-4 text-black">
                         Peta Data Spasial
                     </h2>
 
@@ -167,14 +168,14 @@ export default function PublicSpatialMap({
                             value={filterValues.search}
                             onChange={handleFilterChange}
                             placeholder="Cari data spasial..."
-                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
+                            className=" text-black w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
                         />
 
                         <select
                             name="village_id"
                             value={filterValues.village_id}
                             onChange={handleFilterChange}
-                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base text-black"
                         >
                             <option value="">Pilih Desa</option>
                             {villages?.map((village) => (
@@ -188,7 +189,7 @@ export default function PublicSpatialMap({
                             name="category"
                             value={filterValues.category}
                             onChange={handleFilterChange}
-                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base"
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base text-black" 
                         >
                             <option value="">Pilih Kategori</option>
                             {categories?.map((category) => (
@@ -215,6 +216,33 @@ export default function PublicSpatialMap({
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                             />
                             
+
+                            {/* Render Subdistrict Boundaries */}
+                            {subdistricts?.map((subdistrict) => {
+                                if (subdistrict.boundary_subdistrict) {
+                                    const geoJsonData =
+                                        typeof subdistrict.boundary_subdistrict === "string"
+                                            ? JSON.parse(subdistrict.boundary_subdistrict)
+                                            : subdistrict.boundary_subdistrict;
+
+                                    return (
+                                        <GeoJSON
+                                            key={subdistrict.id}
+                                            data={geoJsonData}
+                                            style={{
+                                                weight: 2,
+                                                color: "#3388ff",
+                                                opacity: 1,
+                                                fillOpacity: 0,
+                                            }}
+                                            onEachFeature={(feature, layer) => {
+                                                layer.bindPopup(subdistrict.name_subdistrict);
+                                            }}
+                                        />
+                                    );
+                                }
+                                return null;
+                            })}
 
                             {/* Render Village Boundaries */}
                             {villages?.map((village) => {
@@ -338,7 +366,7 @@ export default function PublicSpatialMap({
 
                 {/* Data List with Responsive Table */}
                 <div className="bg-white rounded-lg shadow-lg p-4 md:p-6">
-                    <h2 className="text-xl md:text-2xl font-bold mb-4">
+                    <h2 className="text-xl md:text-2xl font-bold mb-4 text-black">
                         Daftar Data Spasial
                     </h2>
 
@@ -357,25 +385,25 @@ export default function PublicSpatialMap({
                                     <tr>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Nama
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Desa
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Kecamatan
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Kategori
                                         </th>
@@ -387,19 +415,19 @@ export default function PublicSpatialMap({
                                             key={item.id}
                                             className="hover:bg-gray-50"
                                         >
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                 {item.name_spatial}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                 {item.village?.name_village}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                 {
                                                     item.subdistrict
                                                         ?.name_subdistrict
                                                 }
                                             </td>
-                                            <td className="px-6 py-4 whitespace-normal text-sm text-gray-900">
+                                            <td className="px-6 py-4 whitespace-normal text-sm text-black">
                                                 {item.categories
                                                     ?.map(
                                                         (cat) =>
@@ -416,7 +444,7 @@ export default function PublicSpatialMap({
 
                     {/* Pagination Controls */}
                     <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 px-4">
-                        <div className="text-sm text-gray-700 text-center sm:text-left">
+                        <div className="text-sm text-black text-center sm:text-left">
                             Menampilkan {(currentPage - 1) * itemsPerPage + 1}{" "}
                             sampai{" "}
                             {Math.min(

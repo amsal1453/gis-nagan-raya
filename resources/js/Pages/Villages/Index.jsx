@@ -22,28 +22,50 @@ const Index = ({ villages, can }) => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const villageStyle = {
-        fillColor: "#3388ff",
-        weight: 2,
-        opacity: 1,
-        color: "white",
-        dashArray: "3",
-        fillOpacity: 0.7,
+    // Generate a color based on the village id or name
+    const getVillageColor = (village) => {
+        // Create a simple hash from the village name or id
+        const hash = village.id || 
+                    village.name_village.split('').reduce((acc, char) => 
+                        acc + char.charCodeAt(0), 0);
+        
+        // List of distinct colors
+        const colors = [
+            '#FF5733', '#33FF57', '#3357FF', '#FF33A8', 
+            '#33A8FF', '#A833FF', '#FFC733', '#33FFC7',
+            '#C733FF', '#FF3333', '#33FF33', '#3333FF',
+            '#FFAA33', '#33FFAA', '#AA33FF', '#FF33FF'
+        ];
+        
+        // Use the hash to select a color
+        return colors[hash % colors.length];
     };
 
-    const highlightFeature = (e) => {
+    const getVillageStyle = (village) => {
+        return {
+            fillColor: getVillageColor(village),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+        };
+    };
+
+    const highlightFeature = (e, village) => {
         const layer = e.target;
         layer.setStyle({
             weight: 5,
-            color: "#666",
-            dashArray: "",
+            color: '#666',
+            dashArray: '',
             fillOpacity: 0.7,
+            fillColor: getVillageColor(village) // Keep the same color but highlight
         });
     };
 
-    const resetHighlight = (e) => {
+    const resetHighlight = (e, village) => {
         const layer = e.target;
-        layer.setStyle(villageStyle);
+        layer.setStyle(getVillageStyle(village));
     };
 
     return (
@@ -79,13 +101,12 @@ const Index = ({ villages, can }) => {
                                 <GeoJSON
                                     key={village.id}
                                     data={geoJsonData}
-                                    style={villageStyle}
+                                    style={() => getVillageStyle(village)}
                                     onEachFeature={(feature, layer) => {
                                         layer.on({
-                                            mouseover: highlightFeature,
-                                            mouseout: resetHighlight,
-                                            click: () =>
-                                                setActiveVillage(village),
+                                            mouseover: (e) => highlightFeature(e, village),
+                                            mouseout: (e) => resetHighlight(e, village),
+                                            click: () => setActiveVillage(village),
                                         });
                                         layer.bindPopup(village.name_village);
                                     }}
@@ -145,7 +166,11 @@ const Index = ({ villages, can }) => {
                                             setActiveVillage(null)
                                         }
                                     >
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 flex items-center">
+                                            <span 
+                                                className="inline-block w-4 h-4 mr-2 rounded-full" 
+                                                style={{backgroundColor: getVillageColor(village)}}
+                                            ></span>
                                             {village.name_village}
                                         </td>
                                         <td className="px-6 py-4">
@@ -214,11 +239,9 @@ const Index = ({ villages, can }) => {
                                 ))}
                             </tbody>
                         </table>
-                    </div>;
+                    </div>
 
-                    {
-                        /* Mobile View */
-                    }
+                    {/* Mobile View */}
                     <div className="md:hidden space-y-4">
                         {villages.map((village) => (
                             <div
@@ -232,7 +255,11 @@ const Index = ({ villages, can }) => {
                                         <label className="text-xs text-gray-500">
                                             Nama Desa
                                         </label>
-                                        <p className="font-medium">
+                                        <p className="font-medium flex items-center">
+                                            <span 
+                                                className="inline-block w-3 h-3 mr-2 rounded-full" 
+                                                style={{backgroundColor: getVillageColor(village)}}
+                                            ></span>
                                             {village.name_village}
                                         </p>
                                     </div>
@@ -256,7 +283,7 @@ const Index = ({ villages, can }) => {
                                         </p>
                                     </div>
                                     <div className="pt-3 border-t border-gray-200">
-                                        <div className="flex flex-wrap gap-2">
+                                        <div className="flex gap-2">
                                             {can.edit && (
                                                 <button
                                                     onClick={() =>
@@ -311,7 +338,7 @@ const Index = ({ villages, can }) => {
                                 </div>
                             </div>
                         ))}
-                    </div>;
+                    </div>
                 </div>
             </div>
         </MainLayout>

@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Models\Village;
 use App\Models\Category;
 use App\Models\SpatialData;
+use App\Models\Subdistrict;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,6 +18,7 @@ class WelcomeController extends Controller
             'auth' => Auth::check(),
             'spatialData' => SpatialData::with(['village', 'subdistrict', 'categories'])->get(),
             'villages' => Village::all(),
+            'subdistricts' => Subdistrict::all(),
             'categories' => Category::all(),
         ]);
     }
