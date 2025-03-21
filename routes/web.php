@@ -1,21 +1,19 @@
 <?php
 
-use App\Http\Controllers\CategoriController;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SpatialDataController;
-use App\Http\Controllers\SubdistirictController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VillageController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\CategoriController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SpatialDataController;
+use App\Http\Controllers\SubdistirictController;
 
 Route::get('/', [WelcomeController::class,'index'])->name('home');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class,'Dashboard'])
+->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -36,7 +34,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['role:admin_kecamatan|admin_desa'])->group(function () {
         Route::resource('/village', VillageController::class);
-        Route::resource('/categories', CategoriController::class);  
+        Route::resource('/categories', CategoriController::class);
         Route::resource('/spatial-data', SpatialDataController::class);
 
     });
