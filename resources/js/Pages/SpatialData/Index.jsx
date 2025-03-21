@@ -70,6 +70,22 @@ export default function Index({
         );
     };
 
+    const handleExportPDF = () => {
+        router.get(
+            route("spatial-data.export-pdf"),
+            {
+                search: filterValues.search,
+                village_id: filterValues.village_id,
+                category: filterValues.category,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                target: "_blank",
+            }
+        );
+    };
+
     // Card component for mobile view
     const DataCard = ({ item }) => (
         <div className="p-4 mb-4 bg-white rounded-lg shadow md:hidden">
@@ -248,16 +264,24 @@ export default function Index({
                             <h2 className="text-xl font-semibold">
                                 Daftar Data Spasial
                             </h2>
-                            {can.create && (
+                            <div className="flex gap-2">
                                 <button
-                                    onClick={() =>
-                                        router.get("/spatial-data/create")
-                                    }
-                                    className="w-full px-4 py-2 text-white bg-blue-500 rounded sm:w-auto hover:bg-blue-600"
+                                    onClick={handleExportPDF}
+                                    className="w-full px-4 py-2 text-white bg-green-500 rounded sm:w-auto hover:bg-green-600"
                                 >
-                                    Tambah Data
+                                    Export PDF
                                 </button>
-                            )}
+                                {can.create && (
+                                    <button
+                                        onClick={() =>
+                                            router.get("/spatial-data/create")
+                                        }
+                                        className="w-full px-4 py-2 text-white bg-blue-500 rounded sm:w-auto hover:bg-blue-600"
+                                    >
+                                        Tambah Data
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         {/* Mobile View - Cards */}
