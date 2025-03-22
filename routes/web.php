@@ -7,6 +7,7 @@ use App\Http\Controllers\VillageController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\CategoriController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DownloadPdfController;
 use App\Http\Controllers\SpatialDataController;
 use App\Http\Controllers\SubdistirictController;
 
@@ -35,10 +36,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['role:admin_kecamatan|admin_desa'])->group(function () {
         Route::resource('/village', VillageController::class);
         Route::resource('/categories', CategoriController::class);
-        Route::resource('/spatial-data', SpatialDataController::class);
 
-        Route::get('/spatial-data/export-pdf', [SpatialDataController::class, 'exportPdf'])
-            ->name('spatial-data.export-pdf');
+        Route::resource('/spatial-data', SpatialDataController::class);
+        Route::resource('/download-pdf', DownloadPdfController::class);
     });
 
     Route::post('/profile/photo', [ProfileController::class, 'updateProfilePhoto'])
@@ -47,14 +47,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-
-
-
-
-
-
-
-
+// 1. Ubah nama route menjadi lebih spesifik
 
 
 require __DIR__ . '/auth.php';

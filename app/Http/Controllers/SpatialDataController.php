@@ -5,23 +5,27 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Village;
 use App\Models\Category;
-use App\Models\Subdistrict;
 use App\Models\SpatialData;
+use App\Models\Subdistrict;
 use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
 use MatanYadaev\EloquentSpatial\Objects\LineString;
-use Barryvdh\DomPDF\Facade\Pdf;
+;
 
 class SpatialDataController extends Controller
 {
+    
     public function index(Request $request)
     {
         $user = Auth::user();
+
+
 
 
 
@@ -52,6 +56,7 @@ class SpatialDataController extends Controller
         }
 
         $spatialData = $query->latest()->paginate(10)->withQueryString();
+
 
 
         return Inertia::render('SpatialData/Index', [
@@ -312,56 +317,4 @@ class SpatialDataController extends Controller
         }
     }
 
-    public function exportPdf(Request $request)
-    {
-        try {
-            // Ambil data spasial dengan filter yang sama seperti di index
-            $query = SpatialData::with(['subdistrict', 'village', 'user', 'categories']);
-            $user = Auth::user();
-
-            // Role-based filters
-            if ($user->hasRole('admin_desa')) {
-                $query->where('village_id', $user->village_id);
-            }
-
-            // Apply filters
-            if ($request->filled('village_id')) {
-                $query->where('village_id', $request->village_id);
-            }
-
-            if ($request->filled('search')) {
-                $query->where('name_spatial', 'like', '%' . $request->search . '%');
-            }
-
-            if ($request->filled('category')) {
-                $query->whereHas('categories', function ($q) use ($request) {
-                    $q->where('categories.id', $request->category);
-                });
-            }
-
-            $spatialData = $query->latest()->get();
-
-            // Generate PDF
-            $pdf = PDF::loadView('pdf.spatial-data', [
-                'spatialData' => $spatialData,
-                'user' => $user,
-                'filterInfo' => [
-                    'search' => $request->search,
-                    'village' => Village::find($request->village_id)?->name_village,
-                    'category' => Category::find($request->category)?->name_category,
-                ],
-                'printDate' => now()->format('d/m/Y H:i')
-            ]);
-
-            // Set paper
-            $pdf->setPaper('A4', 'landscape');
-
-            // Download PDF
-            return $pdf->download('data-spasial-' . now()->format('Y-m-d') . '.pdf');
-        } catch (\Exception $e) {
-            Log::error('Error generating PDF: ' . $e->getMessage());
-            return redirect()->back()
-                ->withErrors(['error' => 'Terjadi kesalahan saat membuat PDF: ' . $e->getMessage()]);
-        }
-    }
 }

@@ -1,8 +1,8 @@
 import Breadcrumbs from "@/Components/Breadcrumbs";
 import MainLayout from "@/Layouts/MainLayout";
-import { Head, usePage, router } from "@inertiajs/react";
+import { Head, usePage, router, Link } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
     MapContainer,
     TileLayer,
