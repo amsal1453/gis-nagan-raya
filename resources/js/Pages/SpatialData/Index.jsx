@@ -14,8 +14,6 @@ import {
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
 import Pagination from "@/Components/Pagination";
-import { useReactToPrint } from "react-to-print";
-import PrintableSpatialData from "./PrintableSpatialData";
 
 const customIcon = new Icon({
     iconUrl: "/markers/marker-icon.png",
@@ -50,42 +48,6 @@ export default function Index({
         subdistrict_id: filters?.subdistrict_id || "",
         village_id: filters?.village_id || "",
         category: filters?.category || "",
-    });
-
-    const componentRef = useRef(null);
-    const [printReady, setPrintReady] = useState(false);
-
-    useEffect(() => {
-        if (spatialData && spatialData.data && spatialData.data.length > 0) {
-            setPrintReady(true);
-            console.log(
-                "Data ready for printing",
-                spatialData.data.length,
-                "items"
-            );
-        } else {
-            setPrintReady(false);
-            console.log("No data available for printing");
-        }
-    }, [spatialData]);
-
-    const handlePrint = useReactToPrint({
-        content: () => componentRef.current,
-        documentTitle: "Data-Spasial-" + new Date().toISOString().split("T")[0],
-        onBeforeGetContent: () => {
-            return new Promise((resolve) => {
-                console.log(
-                    "Preparing to print, data available:",
-                    spatialData.data.length
-                );
-                setTimeout(() => {
-                    resolve();
-                }, 500);
-            });
-        },
-        onAfterPrint: () => {
-            console.log("Print completed");
-        },
     });
 
     const handleFilterChange = (e) => {
@@ -287,10 +249,11 @@ export default function Index({
                                 Daftar Data Spasial
                             </h2>
                             <div className="flex gap-2">
-                                <Link
-                                    href={route("spatial-data.export-pdf",)}
-                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 text-white bg-green-500 rounded sm:w-auto hover:bg-green-600"
+                                <a
+                                    href="/download-pdf"
                                     target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 text-white bg-green-500 rounded sm:w-auto hover:bg-green-600"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -305,7 +268,7 @@ export default function Index({
                                         />
                                     </svg>
                                     Export PDF
-                                </Link>
+                                </a>
                                 {can.create && (
                                     <button
                                         onClick={() =>
@@ -450,14 +413,6 @@ export default function Index({
                         />
                     </div>
                 </div>
-            </div>
-
-            {/* Komponen yang akan dicetak */}
-            <div style={{ position: "absolute", left: "-9999px" }}>
-                <PrintableSpatialData
-                    ref={componentRef}
-                    data={spatialData.data}
-                />
             </div>
         </MainLayout>
     );

@@ -63,41 +63,7 @@ const Dashboard = ({ auth, stats }) => {
               </div>
           </div>
 
-          {/* Time Range Selector */}
-          <div className="mb-6 flex justify-end">
-              <div className="inline-flex rounded-md shadow-sm">
-                  <button
-                      onClick={() => setTimeRange("week")}
-                      className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
-                          timeRange === "week"
-                              ? "bg-primary text-black"
-                              : "bg-white text-black hover:bg-gray-50"
-                      }`}
-                  >
-                      Minggu Ini
-                  </button>
-                  <button
-                      onClick={() => setTimeRange("month")}
-                      className={`px-4 py-2 text-sm font-medium ${
-                          timeRange === "month"
-                              ? "bg-primary text-black"
-                              : "bg-white text-black hover:bg-gray-50"
-                      }`}
-                  >
-                      Bulan Ini
-                  </button>
-                  <button
-                      onClick={() => setTimeRange("year")}
-                      className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
-                          timeRange === "year"
-                              ? "bg-primary text-black"
-                              : "bg-white text-black hover:bg-gray-50"
-                      }`}
-                  >
-                      Tahun Ini
-                  </button>
-              </div>
-          </div>
+        
 
           {/* Main Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">

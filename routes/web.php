@@ -38,9 +38,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('/categories', CategoriController::class);
 
         Route::resource('/spatial-data', SpatialDataController::class);
-
-        Route::get('/spatial-data/export-pdf', [DownloadPdfController::class, 'index'])
-            ->name('spatial-data.export-pdf');
+        Route::resource('/download-pdf', DownloadPdfController::class);
     });
 
     Route::post('/profile/photo', [ProfileController::class, 'updateProfilePhoto'])
