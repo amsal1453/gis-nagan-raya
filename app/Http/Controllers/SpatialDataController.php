@@ -5,24 +5,25 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Village;
 use App\Models\Category;
-use App\Models\Subdistrict;
 use App\Models\SpatialData;
+use App\Models\Subdistrict;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use MatanYadaev\EloquentSpatial\Objects\Polygon;
 use MatanYadaev\EloquentSpatial\Objects\LineString;
 
 class SpatialDataController extends Controller
 {
-    public function index(Request $request) 
+    public function index(Request $request)
     {
         $user = Auth::user();
-        
-       
+
+
 
         $query = SpatialData::with(['subdistrict', 'village', 'user', 'categories']);
 
@@ -52,7 +53,7 @@ class SpatialDataController extends Controller
 
         $spatialData = $query->latest()->paginate(10)->withQueryString();
 
-        
+
         return Inertia::render('SpatialData/Index', [
             'spatialData' => $spatialData,
             'filters' => $request->only(['search', 'subdistrict_id', 'village_id', 'category']),
@@ -308,6 +309,66 @@ class SpatialDataController extends Controller
             Log::error('Error deleting spatial data: ' . $e->getMessage());
             return redirect()->back()
                 ->withErrors(['error' => 'Terjadi kesalahan saat menghapus data spasial: ' . $e->getMessage()]);
+        }
+    }
+
+    public function exportPdf(Request $request)
+    {
+        try {
+            // Ambil data spasial dengan filter yang sama seperti di index
+            $query = SpatialData::with(['subdistrict', 'village', 'user', 'categories']);
+            $user = Auth::user();
+
+            // Role-based filters
+            if ($user->hasRole('admin_desa')) {
+                $query->where('village_id', $user->village_id);
+            } elseif ($user->hasRole('admin_kecamatan')) {
+                if ($request->filled('subdistrict_id')) {
+                    $query->where('subdistrict_id', $request->subdistrict_id);
+                }
+            }
+
+            // Apply filters
+            if ($request->filled('village_id')) {
+                $query->where('village_id', $request->village_id);
+            }
+
+            if ($request->filled('search')) {
+                $query->where('name_spatial', 'like', '%' . $request->search . '%');
+            }
+
+            if ($request->filled('category')) {
+                $query->whereHas('categories', function ($q) use ($request) {
+                    $q->where('categories.id', $request->category);
+                });
+            }
+
+            $spatialData = $query->latest()->get();
+
+            // Siapkan data untuk PDF
+            $data = [
+                'spatialData' => $spatialData,
+                'user' => $user,
+                'printDate' => now()->translatedFormat('d F Y H:i')
+            ];
+
+            // Set opsi PDF
+            $pdf = PDF::loadView('pdf.spatial-data', $data);
+            $pdf->setPaper('A4', 'landscape');
+            $pdf->setOptions([
+                'dpi' => 150,
+                'defaultFont' => 'sans-serif',
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true
+            ]);
+
+            // Download PDF dengan nama yang sesuai
+            $filename = 'Data-Spasial-' . now()->format('Y-m-d') . '.pdf';
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            Log::error('Error generating PDF: ' . $e->getMessage());
+            return redirect()->back()
+                ->withErrors(['error' => 'Terjadi kesalahan saat membuat PDF: ' . $e->getMessage()]);
         }
     }
 }

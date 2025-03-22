@@ -1,8 +1,8 @@
 import Breadcrumbs from "@/Components/Breadcrumbs";
 import MainLayout from "@/Layouts/MainLayout";
-import { Head, usePage, router } from "@inertiajs/react";
+import { Head, usePage, router, Link } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
     MapContainer,
     TileLayer,
@@ -14,6 +14,8 @@ import {
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
 import Pagination from "@/Components/Pagination";
+import { useReactToPrint } from "react-to-print";
+import PrintableSpatialData from "./PrintableSpatialData";
 
 const customIcon = new Icon({
     iconUrl: "/markers/marker-icon.png",
@@ -48,6 +50,42 @@ export default function Index({
         subdistrict_id: filters?.subdistrict_id || "",
         village_id: filters?.village_id || "",
         category: filters?.category || "",
+    });
+
+    const componentRef = useRef(null);
+    const [printReady, setPrintReady] = useState(false);
+
+    useEffect(() => {
+        if (spatialData && spatialData.data && spatialData.data.length > 0) {
+            setPrintReady(true);
+            console.log(
+                "Data ready for printing",
+                spatialData.data.length,
+                "items"
+            );
+        } else {
+            setPrintReady(false);
+            console.log("No data available for printing");
+        }
+    }, [spatialData]);
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+        documentTitle: "Data-Spasial-" + new Date().toISOString().split("T")[0],
+        onBeforeGetContent: () => {
+            return new Promise((resolve) => {
+                console.log(
+                    "Preparing to print, data available:",
+                    spatialData.data.length
+                );
+                setTimeout(() => {
+                    resolve();
+                }, 500);
+            });
+        },
+        onAfterPrint: () => {
+            console.log("Print completed");
+        },
     });
 
     const handleFilterChange = (e) => {
@@ -248,16 +286,37 @@ export default function Index({
                             <h2 className="text-xl font-semibold">
                                 Daftar Data Spasial
                             </h2>
-                            {can.create && (
-                                <button
-                                    onClick={() =>
-                                        router.get("/spatial-data/create")
-                                    }
-                                    className="w-full px-4 py-2 text-white bg-blue-500 rounded sm:w-auto hover:bg-blue-600"
+                            <div className="flex gap-2">
+                                <Link
+                                    href={route("spatial-data.export-pdf",)}
+                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 text-white bg-green-500 rounded sm:w-auto hover:bg-green-600"
+                                    target="_blank"
                                 >
-                                    Tambah Data
-                                </button>
-                            )}
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="w-5 h-5"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                    Export PDF
+                                </Link>
+                                {can.create && (
+                                    <button
+                                        onClick={() =>
+                                            router.get("/spatial-data/create")
+                                        }
+                                        className="w-full px-4 py-2 text-white bg-blue-500 rounded sm:w-auto hover:bg-blue-600"
+                                    >
+                                        Tambah Data
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         {/* Mobile View - Cards */}
@@ -391,6 +450,14 @@ export default function Index({
                         />
                     </div>
                 </div>
+            </div>
+
+            {/* Komponen yang akan dicetak */}
+            <div style={{ position: "absolute", left: "-9999px" }}>
+                <PrintableSpatialData
+                    ref={componentRef}
+                    data={spatialData.data}
+                />
             </div>
         </MainLayout>
     );
