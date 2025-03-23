@@ -3,30 +3,60 @@ import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
 const About = () => {
-    const controls = useAnimation();
-    const [ref, inView] = useInView({
+    // Use separate controls for different animation groups
+    const containerControls = useAnimation();
+    const headerControls = useAnimation();
+    const leftCardControls = useAnimation();
+    const rightCardControls = useAnimation();
+
+    // Improve InView detection with multiple refs
+    const [containerRef, containerInView] = useInView({
+        threshold: 0.1,
+        triggerOnce: true,
+    });
+
+    const [headerRef, headerInView] = useInView({
+        threshold: 0.2,
+        triggerOnce: true,
+    });
+
+    const [cardsRef, cardsInView] = useInView({
         threshold: 0.3,
         triggerOnce: true,
     });
 
+    // Trigger animations more reliably based on view status
     useEffect(() => {
-        if (inView) {
-            controls.start("visible");
+        if (containerInView) {
+            containerControls.start("visible");
         }
-    }, [controls, inView]);
+    }, [containerControls, containerInView]);
+
+    useEffect(() => {
+        if (headerInView) {
+            headerControls.start("visible");
+        }
+    }, [headerControls, headerInView]);
+
+    useEffect(() => {
+        if (cardsInView) {
+            // Sequence the animations with a slight delay
+            leftCardControls.start("visible");
+            setTimeout(() => {
+                rightCardControls.start("visible");
+            }, 150);
+        }
+    }, [leftCardControls, rightCardControls, cardsInView]);
 
     const containerVariants = {
         hidden: {
             opacity: 0,
-            y: 50,
         },
         visible: {
             opacity: 1,
-            y: 0,
             transition: {
                 duration: 0.8,
                 ease: "easeOut",
-                staggerChildren: 0.3,
             },
         },
     };
@@ -34,7 +64,7 @@ const About = () => {
     const headerVariants = {
         hidden: {
             opacity: 0,
-            y: -50,
+            y: -30,
         },
         visible: {
             opacity: 1,
@@ -49,14 +79,19 @@ const About = () => {
     const leftCardVariants = {
         hidden: {
             opacity: 0,
-            x: -100,
+            x: -50,
+            scale: 0.95,
         },
         visible: {
             opacity: 1,
             x: 0,
+            scale: 1,
             transition: {
-                duration: 0.8,
+                duration: 0.7,
                 ease: "easeOut",
+                type: "spring",
+                stiffness: 100,
+                damping: 15,
             },
         },
     };
@@ -64,14 +99,19 @@ const About = () => {
     const rightCardVariants = {
         hidden: {
             opacity: 0,
-            x: 100,
+            x: 50,
+            scale: 0.95,
         },
         visible: {
             opacity: 1,
             x: 0,
+            scale: 1,
             transition: {
-                duration: 0.8,
+                duration: 0.7,
                 ease: "easeOut",
+                type: "spring",
+                stiffness: 100,
+                damping: 15,
             },
         },
     };
@@ -93,48 +133,68 @@ const About = () => {
     );
 
     const MissionListItem = ({ children }) => (
-        <li className="flex items-start">
+        <motion.li
+            className="flex items-start"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+        >
             <CheckmarkIcon />
             <span>{children}</span>
-        </li>
+        </motion.li>
     );
 
     return (
         <motion.section
-            ref={ref}
+            ref={containerRef}
             initial="hidden"
-            animate={controls}
+            animate={containerControls}
             variants={containerVariants}
             id="about"
-            className="min-h-screen bg-gradient-to-r from-[#08244d] to-[#0A4D8C] overflow-x-hidden"
+            className="min-h-screen bg-gradient-to-r from-[#08244d] to-[#0A4D8C] overflow-hidden"
         >
             <div className="container mx-auto px-4 py-12">
                 {/* Header Section */}
                 <motion.div
+                    ref={headerRef}
+                    initial="hidden"
+                    animate={headerControls}
                     variants={headerVariants}
                     className="text-center mb-12"
                 >
                     <h1 className="text-4xl font-bold text-white mb-4">
                         Tentang Kami
                     </h1>
-                    <div className="w-20 h-1 bg-white mx-auto mb-8"></div>
-                    <p className="text-gray-200 max-w-2xl mx-auto text-lg">
+                    <motion.div
+                        className="w-20 h-1 bg-white mx-auto mb-8"
+                        initial={{ width: 0 }}
+                        animate={{ width: 80 }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                    ></motion.div>
+                    <motion.p
+                        className="text-gray-200 max-w-2xl mx-auto text-lg"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.8, delay: 0.5 }}
+                    >
                         Sistem Informasi Geografis kami menyediakan solusi
                         pemetaan dan analisis spasial yang komprehensif untuk
                         membantu Anda memahami data geografis dengan lebih baik.
-                    </p>
+                    </motion.p>
                 </motion.div>
 
                 {/* Main Content */}
-                <div className="grid md:grid-cols-2 gap-8">
+                <div ref={cardsRef} className="grid md:grid-cols-2 gap-8">
                     {/* Vision Card */}
                     <motion.div
+                        initial="hidden"
+                        animate={leftCardControls}
                         variants={leftCardVariants}
-                        className="p-6 bg-[#08244d] rounded-lg border-2 border-gray-700 transition-all duration-300 hover:scale-105 hover:bg-[#0A4D8C] hover:shadow-xl"
+                        className="p-6 bg-[#08244d] rounded-lg border-2 border-gray-700 transition-all duration-300 hover:shadow-xl"
                         whileHover={{
-                            scale: 1.05,
+                            scale: 1.03,
                             backgroundColor: "#0A4D8C",
-                            transition: { duration: 0.3 },
+                            transition: { duration: 0.2 },
                         }}
                     >
                         <div className="mb-4">
@@ -155,12 +215,14 @@ const About = () => {
 
                     {/* Mission Card */}
                     <motion.div
+                        initial="hidden"
+                        animate={rightCardControls}
                         variants={rightCardVariants}
-                        className="p-6 bg-[#08244d] rounded-lg border-2 border-gray-700 transition-all duration-300 hover:scale-105 hover:bg-[#0A4D8C] hover:shadow-xl"
+                        className="p-6 bg-[#08244d] rounded-lg border-2 border-gray-700 transition-all duration-300 hover:shadow-xl"
                         whileHover={{
-                            scale: 1.05,
+                            scale: 1.03,
                             backgroundColor: "#0A4D8C",
-                            transition: { duration: 0.3 },
+                            transition: { duration: 0.2 },
                         }}
                     >
                         <div className="mb-4">

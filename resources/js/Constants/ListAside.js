@@ -56,6 +56,6 @@ export const LIST_ASIDE = [
         icon: IoLogOutSharp,
         permission: ['admin_kecamatan', 'admin_desa']
     }
- 
+
 ];
 
