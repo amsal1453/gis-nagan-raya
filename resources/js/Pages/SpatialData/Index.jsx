@@ -70,25 +70,11 @@ export default function Index({
         );
     };
 
-    const handleExportPDF = () => {
-        router.get(
-            route("spatial-data.export-pdf"),
-            {
-                search: filterValues.search,
-                village_id: filterValues.village_id,
-                category: filterValues.category,
-            },
-            {
-                preserveState: true,
-                preserveScroll: true,
-                target: "_blank",
-            }
-        );
-    };
+    
 
     // Card component for mobile view
     const DataCard = ({ item }) => (
-        <div className="p-4 mb-4 bg-white rounded-lg shadow md:hidden">
+        <div className="p-4 mb-4 bg-white rounded-lg shadow md:hidden text-black">
             <h3 className="mb-2 text-lg font-semibold">{item.name_spatial}</h3>
             <div className="space-y-2">
                 <div className="grid grid-cols-3">
@@ -115,7 +101,7 @@ export default function Index({
                     {can.edit && (
                         <button
                             onClick={() =>
-                                Inertia.get(route("spatial-data.edit", item.id))
+                                router.get(route("spatial-data.edit", item.id))
                             }
                             className="px-3 py-1 text-white bg-yellow-500 rounded hover:bg-yellow-600"
                         >
@@ -130,7 +116,7 @@ export default function Index({
                                         "Apakah Anda yakin ingin menghapus data ini?"
                                     )
                                 ) {
-                                    Inertia.delete(
+                                    router.delete(
                                         route("spatial-data.destroy", item.id)
                                     );
                                 }
@@ -162,7 +148,7 @@ export default function Index({
                 </div>
 
                 {/* Responsive Filter Panel */}
-                <div className="p-4 mb-6 bg-primary shadow-sm sm:p-6 sm:rounded-lg ">
+                <div className="p-4 mb-6 bg-primary shadow-sm sm:p-6 sm:rounded-lg text-black">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                         <input
                             type="text"
@@ -261,16 +247,30 @@ export default function Index({
                 <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div className="p-4 bg-white border-b border-gray-200 sm:p-6">
                         <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:justify-between sm:items-center">
-                            <h2 className="text-xl font-semibold">
+                            <h2 className="text-xl font-semibold text-black">
                                 Daftar Data Spasial
                             </h2>
                             <div className="flex gap-2">
-                                <button
-                                    onClick={handleExportPDF}
-                                    className="w-full px-4 py-2 text-white bg-green-500 rounded sm:w-auto hover:bg-green-600"
+                            <a
+                                    href="/download-pdf"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full flex items-center justify-center gap-2 px-4 py-2 text-white bg-green-500 rounded sm:w-auto hover:bg-green-600"
                                 >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="w-5 h-5"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
                                     Export PDF
-                                </button>
+                                </a>
                                 {can.create && (
                                     <button
                                         onClick={() =>
@@ -300,19 +300,19 @@ export default function Index({
                                 >
                                     <thead className="bg-gray-50">
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider whitespace-nowrap">
                                                 Nama
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider whitespace-nowrap">
                                                 Desa
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider whitespace-nowrap">
                                                 Kecamatan
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider whitespace-nowrap">
                                                 Kategori
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider whitespace-nowrap">
                                                 Aksi
                                             </th>
                                         </tr>
@@ -321,7 +321,7 @@ export default function Index({
                                         {spatialData.data?.map((item) => (
                                             <tr
                                                 key={item.id}
-                                                className="hover:bg-gray-50"
+                                                className="hover:bg-gray-50 text-black"
                                                 onMouseEnter={() =>
                                                     setActiveData(item)
                                                 }

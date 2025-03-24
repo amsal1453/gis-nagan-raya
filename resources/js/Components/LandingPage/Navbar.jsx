@@ -123,7 +123,7 @@ export default function Navbar({ auth }) {
                                 Contact
                             </a>
                             {!auth.user ? (
-                                <a
+                                <Link
                                     href="/login"
                                     className={`${
                                         isScrolled
@@ -132,7 +132,7 @@ export default function Navbar({ auth }) {
                                     } px-4 py-2 rounded-lg transition-all`}
                                 >
                                     Login
-                                </a>
+                                </Link>
                             ) : (
                                 <span
                                     className={`${

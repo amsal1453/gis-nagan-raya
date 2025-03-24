@@ -25,17 +25,60 @@ const VILLAGE_COLORS = {
     ],
 };
 
-// SVG marker creation function remains the same
-const createSVGMarker = () => {
-    const svgString = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="24" height="32">
-            <path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"
-            fill="#FF0000"
-            stroke="#FFFFFF"
-            stroke-width="20"
-            />
-        </svg>
-    `;
+// Add this after VILLAGE_COLORS definition
+const CATEGORY_COLORS = {
+    default: "#FF0000", // Default red color
+    colors: {
+        // Will be populated based on categories
+    }
+};
+
+// Tambahkan definisi marker icons berdasarkan kategori
+const CATEGORY_MARKERS = {
+    default: {
+        color: "#FF0000",
+        icon: `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" width="24" height="32">
+                <path d="M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"/>
+            </svg>`,
+    },
+    // Contoh marker untuk beberapa kategori
+    sekolah: {
+        color: "#4CAF50",
+        icon: `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="32">
+                <path d="M12 3L1 9l11 6l9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+            </svg>`,
+    },
+    kesehatan: {
+        color: "#2196F3",
+        icon: `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="32">
+                <path d="M18 14h-4v4h-4v-4H6v-4h4V6h4v4h4m1-9H5c-1.11 0-2 .89-2 2v14c0 1.11.89 2 2 2h14c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2z"/>
+            </svg>`,
+    },
+    masjid: {
+        color: "#FFC107",
+        icon: `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="32">
+                <path d="M12 2L2 12h3v8h6v-6h2v6h6v-8h3L12 2zm0 3l6 6v1h-1v6h-2v-6h-6v6H7v-6H6v-1l6-6z"/>
+            </svg>`,
+    },
+};
+
+// Modifikasi fungsi createSVGMarker untuk menerima kategori
+const createSVGMarker = (category, color) => {
+    const markerConfig =
+        CATEGORY_MARKERS[category?.toLowerCase()] || CATEGORY_MARKERS.default;
+    const markerColor = color || markerConfig.color;
+
+    const svgString = markerConfig.icon.replace(
+        "/>",
+        `fill="${markerColor}"
+         stroke="#FFFFFF"
+         stroke-width="20"
+        />`
+    );
 
     return divIcon({
         html: svgString,
@@ -50,6 +93,102 @@ const getColorByVillageId = (villageId) => {
     if (!villageId) return VILLAGE_COLORS.default;
     const index = parseInt(villageId) % VILLAGE_COLORS.colors.length;
     return VILLAGE_COLORS.colors[index];
+};
+
+// Add this function to get color by category
+const getColorByCategory = (categoryId, categories) => {
+    if (!categoryId) return CATEGORY_COLORS.default;
+
+    // Check if color exists in cache
+    if (CATEGORY_COLORS.colors[categoryId]) {
+        return CATEGORY_COLORS.colors[categoryId];
+    }
+
+    // If not, assign a new color
+    const categoryIndex = categories.findIndex(
+        (cat) => cat.id === parseInt(categoryId)
+    );
+    if (categoryIndex === -1) return CATEGORY_COLORS.default;
+
+    const colorIndex = categoryIndex % VILLAGE_COLORS.colors.length;
+    const color = VILLAGE_COLORS.colors[colorIndex];
+
+    // Cache the color for future use
+    CATEGORY_COLORS.colors[categoryId] = color;
+
+    return color;
+};
+
+// Modifikasi komponen MapLegend untuk menampilkan legenda kategori dan desa
+const MapLegend = ({ categories, villages }) => {
+    return (
+        <div className="absolute bottom-4 right-4 z-[1000] bg-white p-2 rounded-lg shadow-lg max-h-[300px] overflow-y-auto">
+            {/* Legenda Kategori */}
+            <div className="mb-4">
+                <div className="text-sm font-bold mb-2 text-black border-b pb-1">
+                    Legenda Kategori
+                </div>
+                <div className="space-y-1">
+                    {categories.map((category) => {
+                        const categoryColor = getColorByCategory(
+                            category.id,
+                            categories
+                        );
+                        const markerIcon = createSVGMarker(
+                            category.name_category,
+                            categoryColor
+                        );
+                        return (
+                            <div
+                                key={category.id}
+                                className="flex items-center gap-2"
+                            >
+                                <div
+                                    className="w-6 h-6 flex items-center justify-center"
+                                    dangerouslySetInnerHTML={{
+                                        __html: markerIcon.options.html,
+                                    }}
+                                />
+                                <span className="text-xs text-black">
+                                    {category.name_category}
+                                </span>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Legenda Desa */}
+            <div>
+                <div className="text-sm font-bold mb-2 text-black border-b pb-1">
+                    Legenda Desa
+                </div>
+                <div className="space-y-1">
+                    {villages?.map((village) => {
+                        const villageColor = getColorByVillageId(village.id);
+                        return (
+                            <div
+                                key={village.id}
+                                className="flex items-center gap-2"
+                            >
+                                <div
+                                    className="w-4 h-4 rounded"
+                                    style={{
+                                        backgroundColor: villageColor,
+                                        opacity: 0.4,
+                                        border: `2px solid ${villageColor}`,
+                                    }}
+                                />
+                                <span className="text-xs text-black">
+                                    {village.name_village}
+                                </span>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default function PublicSpatialMap({
@@ -189,7 +328,7 @@ export default function PublicSpatialMap({
                             name="category"
                             value={filterValues.category}
                             onChange={handleFilterChange}
-                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base text-black" 
+                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm md:text-base text-black"
                         >
                             <option value="">Pilih Kategori</option>
                             {categories?.map((category) => (
@@ -215,14 +354,16 @@ export default function PublicSpatialMap({
                                 url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
                                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                             />
-                            
 
                             {/* Render Subdistrict Boundaries */}
                             {subdistricts?.map((subdistrict) => {
                                 if (subdistrict.boundary_subdistrict) {
                                     const geoJsonData =
-                                        typeof subdistrict.boundary_subdistrict === "string"
-                                            ? JSON.parse(subdistrict.boundary_subdistrict)
+                                        typeof subdistrict.boundary_subdistrict ===
+                                        "string"
+                                            ? JSON.parse(
+                                                  subdistrict.boundary_subdistrict
+                                              )
                                             : subdistrict.boundary_subdistrict;
 
                                     return (
@@ -236,7 +377,9 @@ export default function PublicSpatialMap({
                                                 fillOpacity: 0,
                                             }}
                                             onEachFeature={(feature, layer) => {
-                                                layer.bindPopup(subdistrict.name_subdistrict);
+                                                layer.bindPopup(
+                                                    subdistrict.name_subdistrict
+                                                );
                                             }}
                                         />
                                     );
@@ -281,10 +424,25 @@ export default function PublicSpatialMap({
                             })}
 
                             {filteredData.map((item) => {
-                                const villageColor = getColorByVillageId(
-                                    item.village?.id
+                                const categoryColor =
+                                    item.categories &&
+                                    item.categories.length > 0
+                                        ? getColorByCategory(
+                                              item.categories[0].id,
+                                              categories
+                                          )
+                                        : CATEGORY_COLORS.default;
+
+                                const categoryName =
+                                    item.categories &&
+                                    item.categories.length > 0
+                                        ? item.categories[0].name_category
+                                        : null;
+
+                                const markerIcon = createSVGMarker(
+                                    categoryName,
+                                    categoryColor
                                 );
-                                const markerIcon = createSVGMarker();
 
                                 return (
                                     <React.Fragment key={item.id}>
@@ -319,7 +477,7 @@ export default function PublicSpatialMap({
                                                     ]
                                                 )}
                                                 pathOptions={{
-                                                    color: villageColor,
+                                                    color: categoryColor,
                                                 }}
                                                 eventHandlers={{
                                                     mouseover: (e) =>
@@ -343,7 +501,7 @@ export default function PublicSpatialMap({
                                                     ]
                                                 )}
                                                 pathOptions={{
-                                                    color: villageColor,
+                                                    color: categoryColor,
                                                 }}
                                                 eventHandlers={{
                                                     mouseover: (e) =>
@@ -360,6 +518,12 @@ export default function PublicSpatialMap({
                                     </React.Fragment>
                                 );
                             })}
+
+                            {/* Add the legend component */}
+                            <MapLegend
+                                categories={categories}
+                                villages={villages}
+                            />
                         </MapContainer>
                     </div>
                 </div>

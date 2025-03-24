@@ -80,6 +80,30 @@ class DownloadPdfController extends Controller
 
     private function buildSpatialDataHtml($spatialData, $user)
     {
+        // Tentukan nama desa berdasarkan role user
+        $villageName = "Semua Desa";
+        
+        if ($user->hasRole('admin_desa') && $user->village) {
+            $villageName = $user->village->name_village;
+        } elseif (count($spatialData) > 0 && $spatialData[0]->village) {
+            // Jika semua data berasal dari desa yang sama
+            $firstVillageId = $spatialData[0]->village_id;
+            $allSameVillage = true;
+            
+            foreach ($spatialData as $data) {
+                if ($data->village_id !== $firstVillageId) {
+                    $allSameVillage = false;
+                    break;
+                }
+            }
+            
+            if ($allSameVillage) {
+                $villageName = $spatialData[0]->village->name_village;
+            } else {
+                $villageName = "Beragam Desa";
+            }
+        }
+
         $html = '
         <!DOCTYPE html>
         <html>
@@ -109,6 +133,10 @@ class DownloadPdfController extends Controller
                     <tr style="border: none;">
                         <td style="border: none; padding: 2px; width: 120px;">Tanggal Cetak</td>
                         <td style="border: none; padding: 2px;">: ' . date('d F Y H:i') . '</td>
+                    </tr>
+                    <tr style="border: none;">
+                        <td style="border: none; padding: 2px;">Desa</td>
+                        <td style="border: none; padding: 2px;">: ' . $villageName . '</td>
                     </tr>
                     <tr style="border: none;">
                         <td style="border: none; padding: 2px;">Dicetak Oleh</td>
