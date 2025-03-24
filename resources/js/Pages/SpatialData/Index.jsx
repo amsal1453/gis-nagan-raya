@@ -2,7 +2,7 @@ import Breadcrumbs from "@/Components/Breadcrumbs";
 import MainLayout from "@/Layouts/MainLayout";
 import { Head, usePage, router, Link } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
     MapContainer,
     TileLayer,
@@ -10,11 +10,34 @@ import {
     Popup,
     Polygon,
     Polyline,
+    GeoJSON,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "leaflet";
 import Pagination from "@/Components/Pagination";
 
+// Definisi warna desa
+const VILLAGE_COLORS = {
+    default: "#808080",
+    colors: [
+        "#FF0000",
+        "#00FF00",
+        "#0000FF",
+        "#FFA500",
+        "#800080",
+        "#FF00FF",
+        "#008080",
+    ],
+};
+
+// Fungsi untuk mendapatkan warna berdasarkan ID desa
+const getColorByVillageId = (villageId) => {
+    if (!villageId) return VILLAGE_COLORS.default;
+    const index = parseInt(villageId) % VILLAGE_COLORS.colors.length;
+    return VILLAGE_COLORS.colors[index];
+};
+
+// Ikon kustom untuk marker
 const customIcon = new Icon({
     iconUrl: "/markers/marker-icon.png",
     iconRetinaUrl: "/markers/marker-icon-2x.png",
@@ -30,6 +53,7 @@ export default function Index({
     can,
     filters,
     villages,
+    subdistricts,
     categories,
 }) {
     const breadcrumbsPath = [
@@ -41,6 +65,8 @@ export default function Index({
             label: "List",
         },
     ];
+ 
+    
 
     const [activeData, setActiveData] = useState(null);
     const [filterValues, setFilterValues] = useState({
@@ -70,7 +96,13 @@ export default function Index({
         );
     };
 
-    
+    const { auth } = usePage().props;
+    const userRole = auth?.roles?.[0] || "";
+    const isAdminDesa = userRole === "admin_desa";
+    const isAdminKecamatan = userRole === "admin_kecamatan";
+
+    console.log("test")
+
 
     // Card component for mobile view
     const DataCard = ({ item }) => (
@@ -128,7 +160,7 @@ export default function Index({
                     )}
                     <button
                         onClick={() =>
-                            Inertia.get(route("spatial-data.show", item.id))
+                            router.get(route("spatial-data.show", item.id))
                         }
                         className="px-3 py-1 text-white bg-blue-500 rounded hover:bg-blue-700"
                     >
@@ -187,7 +219,7 @@ export default function Index({
                     </div>
                 </div>
 
-                {/* Map Panel */}
+                {/* Map Panel with boundary visualization */}
                 <div className="mb-6 overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div className="h-[300px] sm:h-[500px] relative">
                         <MapContainer
@@ -197,12 +229,104 @@ export default function Index({
                         >
                             <TileLayer
                                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                                attribution="&copy; Esri"
+                                attribution="© Esri"
                             />
                             <TileLayer
                                 url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
-                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                                attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                             />
+
+                            {/* Render Subdistrict Boundaries for admin_kecamatan */}
+                            {isAdminKecamatan &&
+                                subdistricts?.map((subdistrict) => {
+                                    if (
+                                        subdistrict.boundary_subdistrict &&
+                                        subdistrict.id === auth.user.subdistrict_id
+                                    ) {
+                                        const geoJsonData =
+                                            typeof subdistrict.boundary_subdistrict ===
+                                            "string"
+                                                ? JSON.parse(
+                                                      subdistrict.boundary_subdistrict
+                                                  )
+                                                : subdistrict.boundary_subdistrict;
+
+                                        return (
+                                            <GeoJSON
+                                                key={subdistrict.id}
+                                                data={geoJsonData}
+                                                style={{
+                                                    weight: 2,
+                                                    color: "#3388ff",
+                                                    opacity: 1,
+                                                    fillOpacity: 0,
+                                                }}
+                                                onEachFeature={(feature, layer) => {
+                                                    layer.bindPopup(
+                                                        subdistrict.name_subdistrict
+                                                    );
+                                                }}
+                                            />
+                                        );
+                                    }
+                                    return null;
+                                })}
+
+                            {/* Render Village Boundaries */}
+                            {villages?.map((village) => {
+                                console.log('Processing village:', village);
+                                
+                                if (!village.boundary_village) {
+                                    console.log('No boundary data for village:', village.name_village);
+                                    return null;
+                                }
+
+                                try {
+                                    const villageColor = getColorByVillageId(village.id);
+                                    const boundaryData = JSON.parse(village.boundary_village);
+                                    
+                                    // Pastikan koordinat dalam format yang benar [longitude, latitude]
+                                    const coordinates = boundaryData.coordinates[0].map(coord => [coord[1], coord[0]]);
+                                    
+                                    console.log('Coordinates for', village.name_village, ':', coordinates);
+
+                                    return (
+                                        <Polygon
+                                            key={village.id}
+                                            positions={coordinates}
+                                            pathOptions={{
+                                                fillColor: villageColor,
+                                                weight: 2,
+                                                color: villageColor,
+                                                opacity: 1,
+                                                fillOpacity: 0.4,
+                                                dashArray: '3'
+                                            }}
+                                            eventHandlers={{
+                                                mouseover: (e) => {
+                                                    const layer = e.target;
+                                                    layer.setStyle({
+                                                        fillOpacity: 0.7
+                                                    });
+                                                },
+                                                mouseout: (e) => {
+                                                    const layer = e.target;
+                                                    layer.setStyle({
+                                                        fillOpacity: 0.4
+                                                    });
+                                                }
+                                            }}
+                                        >
+                                            <Popup>{village.name_village}</Popup>
+                                        </Polygon>
+                                    );
+                                } catch (error) {
+                                    console.error('Error processing village boundary:', village.name_village, error);
+                                    return null;
+                                }
+                            })}
+
+                            {/* Existing Spatial Data Markers/Polygons/Polylines */}
                             {spatialData.data?.map((item) => (
                                 <React.Fragment key={item.id}>
                                     {/* Render Point Marker */}
@@ -251,7 +375,7 @@ export default function Index({
                                 Daftar Data Spasial
                             </h2>
                             <div className="flex gap-2">
-                            <a
+                                <a
                                     href="/download-pdf"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -270,7 +394,7 @@ export default function Index({
                                         />
                                     </svg>
                                     Export PDF
-                                </a>
+                                </a>
                                 {can.create && (
                                     <button
                                         onClick={() =>
